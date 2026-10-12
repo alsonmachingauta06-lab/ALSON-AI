@@ -1,0 +1,3837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#08090d">
+<title>ALSON AI</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#08090d;
+  --panel:#101219;
+  --panel2:#151720;
+  --border:rgba(255,255,255,.08);
+  --text:#f5f7fb;
+  --muted:#8d93a1;
+  --accent:#25d366;
+  --accent2:#128c7e;
+  --verified:#1687ff;
+}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+body{overflow:hidden}
+
+.app{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(37,211,102,.10),transparent 35%),
+    var(--bg);
+}
+
+/* HEADER */
+.header{
+  height:64px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  background:rgba(8,9,13,.94);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:15px;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  box-shadow:0 8px 30px rgba(37,211,102,.22);
+}
+
+.brandText strong{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:15px;
+  letter-spacing:.2px;
+}
+
+.verifiedBadge{
+  width:18px;
+  height:18px;
+  display:inline-block;
+  margin-left:5px;
+  vertical-align:-3px;
+  flex:none;
+  filter:drop-shadow(0 1px 2px rgba(29,161,242,.25));
+}
+
+.verifiedBadge::after{
+  content:"✓";
+  transform:translateY(-.5px);
+}
+
+.aiStatus{
+  color:#25d366;
+  font-size:11px;
+  font-weight:600;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:#8d93a1;
+  font-size:11px;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 10px #22c55e;
+}
+
+.iconBtn{
+  width:40px;
+  height:40px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.035);
+  color:white;
+  border-radius:12px;
+  font-size:18px;
+}
+
+/* CHAT */
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 16px 150px;
+  scroll-behavior:smooth;
+}
+
+.welcome{
+  min-height:70%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px 12px;
+  animation:fadeUp .5s ease;
+}
+
+.welcomeLogo{
+  width:72px;
+  height:72px;
+  border-radius:24px;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  font-weight:900;
+  background:linear-gradient(135deg,#8b5cf6,#4f46e5);
+  box-shadow:0 15px 55px rgba(99,102,241,.32);
+  margin-bottom:22px;
+}
+
+.welcome h1{
+  margin:0;
+  font-size:30px;
+  letter-spacing:-1px;
+}
+
+.welcome p{
+  max-width:420px;
+  color:var(--muted);
+  line-height:1.6;
+  margin:10px 0 25px;
+}
+
+.quick{
+  width:100%;
+  max-width:500px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.quick button{
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  color:var(--text);
+  background:rgba(255,255,255,.035);
+  text-align:left;
+  font-size:13px;
+  transition:.2s;
+}
+
+.quick button:hover{
+  transform:translateY(-2px);
+  background:rgba(139,92,246,.1);
+  border-color:rgba(139,92,246,.35);
+}
+
+/* MESSAGES */
+.message{
+  max-width:760px;
+  margin:0 auto 8px;
+  display:flex;
+  gap:8px;
+  animation:fadeUp .2s ease;
+}
+
+.message.user{justify-content:flex-end}
+
+.avatar{
+  width:32px;
+  height:32px;
+  flex:none;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:800;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  color:#fff;
+  box-shadow:0 3px 12px rgba(37,211,102,.18);
+}
+
+.user .avatar{display:none}
+
+.bubble{
+  position:relative;
+  max-width:min(85%,650px);
+  padding:9px 12px;
+  border-radius:9px;
+  line-height:1.5;
+  font-size:14px;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  box-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+
+.ai .bubble{
+  background:#202c33;
+  border:0;
+  border-top-left-radius:3px;
+  color:#e9edef;
+}
+
+.user .bubble{
+  background:#005c4b;
+  border:0;
+  border-top-right-radius:3px;
+  color:#e9edef;
+}
+
+.ai .bubble::before{
+  content:"ALSON AI";
+  display:inline-block;
+  color:#4da3ff;
+  font-size:10px;
+  font-weight:700;
+  margin-right:4px;
+  margin-bottom:4px;
+  letter-spacing:.1px;
+}
+
+.ai .bubble::after{
+  content:"✓";
+  display:inline-grid;
+  place-items:center;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#1DA1F2;
+  color:#fff;
+  font-size:8px;
+  font-weight:900;
+  vertical-align:1px;
+}
+
+.user .bubble::after{
+  content:"";
+  display:block;
+  clear:both;
+}
+
+/* COMPOSER */
+.composerWrap{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:8px 12px calc(9px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,rgba(8,9,13,.96) 28%);
+}
+
+.composer{
+  max-width:760px;
+  margin:auto;
+  display:flex;
+  align-items:flex-end;
+  gap:7px;
+  padding:6px 7px 6px 12px;
+  background:#202c33;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:24px;
+  box-shadow:0 5px 30px rgba(0,0,0,.35);
+}
+
+textarea{
+  flex:1;
+  resize:none;
+  max-height:130px;
+  min-height:42px;
+  padding:10px 5px;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#e9edef;
+  font:inherit;
+  line-height:20px;
+}
+
+textarea::placeholder{
+  color:#8696a0;
+}
+
+.send{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  color:white;
+  background:#00a884;
+  font-size:18px;
+  box-shadow:0 3px 12px rgba(0,168,132,.25);
+}
+
+.send:disabled{
+  opacity:.35;
+}
+
+.tools{
+  max-width:760px;
+  margin:7px auto 0;
+  display:flex;
+  justify-content:center;
+  gap:7px;
+}
+
+.mode{
+  padding:6px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(32,44,51,.8);
+  color:#aebac1;
+  font-size:11px;
+}
+
+/* TYPING */
+.typing{
+  display:flex;
+  gap:4px;
+  padding:4px 2px;
+}
+
+.typing i{
+  width:6px;
+  height:6px;
+  background:#25d366;
+  border-radius:50%;
+  animation:bounce 1s infinite;
+}
+
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+
+/* NAV */
+.nav{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  padding:7px 0 0;
+}
+
+.nav button{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.025);
+  color:var(--muted);
+  border-radius:11px;
+  padding:7px 11px;
+  font-size:11px;
+}
+
+.nav button.active{
+  color:white;
+  border-color:rgba(139,92,246,.35);
+  background:rgba(139,92,246,.12);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes bounce{
+  0%,80%,100%{transform:translateY(0)}
+  40%{transform:translateY(-5px)}
+}
+
+@media(min-width:700px){
+  .header{padding:0 24px}
+  .chat{padding-left:24px;padding-right:24px}
+  .welcome h1{font-size:36px}
+}
+
+/* THEMES */
+body[data-theme="whatsapp"]{
+  --bg:#0b141a;
+  --panel:#202c33;
+  --panel2:#111b21;
+  --border:rgba(255,255,255,.08);
+  --text:#e9edef;
+  --muted:#8696a0;
+  --accent:#00a884;
+  --accent2:#25d366;
+}
+
+body[data-theme="ocean"]{
+  --bg:#07131f;
+  --panel:#102536;
+  --panel2:#0b1c2a;
+  --accent:#2196f3;
+  --accent2:#00bcd4;
+}
+
+body[data-theme="violet"]{
+  --bg:#100b1c;
+  --panel:#1d1430;
+  --panel2:#160f25;
+  --accent:#a855f7;
+  --accent2:#7c3aed;
+}
+
+body[data-theme="sunset"]{
+  --bg:#1b0d0a;
+  --panel:#2b1710;
+  --panel2:#21100c;
+  --accent:#f97316;
+  --accent2:#ef4444;
+}
+
+body[data-theme="light"]{
+  --bg:#f4f6f8;
+  --panel:#ffffff;
+  --panel2:#eef1f4;
+  --border:rgba(0,0,0,.08);
+  --text:#111827;
+  --muted:#667085;
+  --accent:#00a884;
+  --accent2:#128c7e;
+}
+
+.themePanel{
+  position:fixed;
+  z-index:100;
+  top:70px;
+  right:12px;
+  width:230px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:rgba(20,24,30,.97);
+  box-shadow:0 15px 50px rgba(0,0,0,.45);
+  backdrop-filter:blur(20px);
+  display:none;
+}
+
+.themePanel.open{display:block}
+
+.themeTitle{
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.themeGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.themeChoice{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:10px;
+  padding:9px 7px;
+  font-size:11px;
+  text-align:left;
+}
+
+.themeChoice.active{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+}
+
+
+
+.voiceSettings{
+  padding:12px 14px;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.voiceSettings label{
+  display:block;
+  color:#aeb8c8;
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+
+.voiceAdjust{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:10px;
+}
+
+.voiceAdjust input{
+  width:100%;
+  accent-color:#1DA1F2;
+}
+
+.callOverlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(10px);
+}
+
+.callOverlay.open{
+  display:flex;
+}
+
+.callWindow{
+  width:min(100%,760px);
+  max-height:92vh;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
+}
+
+.callHeader{
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.callHeader button{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:50%;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:16px;
+}
+
+.videoStage{
+  position:relative;
+  aspect-ratio:16/10;
+  background:#050607;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+
+#localVideo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+
+.aiCallAvatar{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  overflow:hidden;
+  color:#fff;
+  background:
+    radial-gradient(ellipse at 50% 35%,#f7d9d4 0%,#b77f85 24%,transparent 54%),
+    linear-gradient(155deg,#302333,#17121f 60%,#4b2b43);
+  transition:filter .35s ease;
+}
+
+.aiCallAvatar.speaking{
+  filter:brightness(1.08);
+}
+
+.aiCallAvatar .callLogo{
+  display:none;
+}
+
+.girlAura{
+  position:absolute;
+  width:260px;
+  height:300px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,191,213,.27),transparent 68%);
+  animation:auraPulse 4s ease-in-out infinite;
+  pointer-events:none;
+}
+
+.girlPortrait{
+  position:relative;
+  width:min(64vw,290px);
+  height:min(67vw,300px);
+  min-height:220px;
+  border-radius:48% 48% 38% 38%;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 37%,#f7d9cb 0 24%,transparent 25%),
+    radial-gradient(ellipse at 50% 24%,#21151b 0 39%,transparent 40%),
+    linear-gradient(145deg,#e7b8bc,#583b55 72%);
+  box-shadow:0 15px 50px #10081288,0 0 45px #ffb9d855;
+  animation:gentlyFloat 4.5s ease-in-out infinite;
+}
+
+.girlPortrait:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:12%;
+  top:-4%;
+  width:76%;
+  height:76%;
+  border-radius:48% 48% 42% 42%;
+  background:
+    radial-gradient(ellipse at 34% 52%,#33212a 0 2.5%,transparent 3.5%),
+    radial-gradient(ellipse at 66% 52%,#33212a 0 2.5%,transparent 3.5%),
+    radial-gradient(ellipse at 35% 51%,#fff 0 1%,transparent 2%),
+    radial-gradient(ellipse at 65% 51%,#fff 0 1%,transparent 2%),
+    radial-gradient(ellipse at 50% 67%,#d88b91 0 1.2%,transparent 2%),
+    radial-gradient(ellipse at 32% 65%,#ed8d9c 0 5%,transparent 12%),
+    radial-gradient(ellipse at 68% 65%,#ed8d9c 0 5%,transparent 12%),
+    radial-gradient(ellipse at 50% 43%,#ffe5d9 0 35%,#e7b7aa 68%,#5b3039 100%);
+  box-shadow:inset 0 -18px 25px #6c394422;
+  clip-path:ellipse(48% 49% at 50% 50%);
+}
+
+.girlPortrait:after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:-12%;
+  left:4%;
+  width:92%;
+  height:70%;
+  border-radius:48% 48% 30% 30%;
+  background:
+    radial-gradient(ellipse at 50% 92%,transparent 0 31%,#21151b 32% 52%,transparent 53%),
+    linear-gradient(100deg,#171116,#49303a 30%,#1d141c 56%,#65404b 74%,#21151b);
+  pointer-events:none;
+}
+
+.girlMouth{
+  position:absolute;
+  z-index:4;
+  left:calc(50% - 11px);
+  top:57%;
+  width:22px;
+  height:7px;
+  border-radius:50%;
+  background:#a84e62;
+  transform:translateX(-50%);
+  transition:height .07s ease,border-radius .07s ease;
+}
+
+.girlPortrait.speaking .girlMouth{
+  height:var(--mouth-open,12px);
+  border-radius:40% 40% 55% 55%;
+}
+
+.girlEyeBlink{
+  position:absolute;
+  z-index:5;
+  top:43%;
+  left:24%;
+  right:24%;
+  height:3px;
+  opacity:0;
+  background:#613744;
+  border-radius:50%;
+  pointer-events:none;
+}
+
+.girlPortrait.blinking .girlEyeBlink{
+  opacity:1;
+}
+
+.girlHand{
+  position:absolute;
+  z-index:6;
+  right:7%;
+  bottom:12%;
+  width:45px;
+  height:100px;
+  border-radius:25px;
+  background:linear-gradient(90deg,#e5b4a7,#ffe0d0,#d99d98);
+  transform:rotate(-24deg) translateY(120%);
+  transform-origin:bottom center;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  box-shadow:inset -5px 0 9px #9c5e5c22;
+}
+
+.girlPortrait.shy .girlHand{
+  transform:rotate(-24deg) translateY(15%);
+}
+
+.girlCaption{
+  position:relative;
+  z-index:8;
+  font-weight:600;
+  text-shadow:0 2px 12px #000;
+}
+
+.girlCaption small{
+  display:block;
+  margin-top:5px;
+  text-align:center;
+  font-weight:400;
+  opacity:.78;
+}
+
+.girlHeart{
+  position:absolute;
+  z-index:7;
+  bottom:-30px;
+  font-size:22px;
+  pointer-events:none;
+  animation:heartRise 3.5s ease-out forwards;
+}
+
+.aiCallAvatar.blushing .girlPortrait:before{
+  filter:saturate(1.4);
+}
+
+@keyframes gentlyFloat{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-5px) rotate(.5deg)}
+}
+@keyframes auraPulse{
+  0%,100%{transform:scale(.94);opacity:.55}
+  50%{transform:scale(1.08);opacity:1}
+}
+@keyframes heartRise{
+  0%{transform:translateY(0) scale(.65);opacity:0}
+  15%{opacity:.9}
+  100%{transform:translateY(-360px) translateX(25px) scale(1.25);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .girlPortrait,.girlAura{animation:none}
+}
+
+.callControls{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  padding:16px;
+}
+
+.callControls button{
+  width:52px;
+  height:52px;
+  border:0;
+  border-radius:50%;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:20px;
+}
+
+.callControls .endCall{
+  background:#e53935;
+  transform:rotate(135deg);
+}
+
+.voiceTranscript{
+  min-height:45px;
+  margin:0 16px 16px;
+  padding:12px;
+  border-radius:12px;
+  background:var(--panel2);
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+@media(max-width:600px){
+  .callOverlay{
+    padding:0;
+  }
+
+  .callWindow{
+    width:100%;
+    height:100%;
+    max-height:none;
+    border-radius:0;
+  }
+
+  .videoStage{
+    aspect-ratio:auto;
+    height:calc(100vh - 190px);
+  }
+}
+
+
+.avatarPickerBar{
+  position:absolute;
+  z-index:30;
+  top:10px;
+  left:10px;
+}
+
+.avatarPickerBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(0,0,0,.58);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+
+.aiAvatarImageWrap{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:none;
+  overflow:hidden;
+}
+
+.aiAvatarImageWrap.active{
+  display:block;
+}
+
+#aiAvatarImage{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform-origin:center center;
+  transition:transform .25s ease, filter .25s ease;
+}
+
+.aiCallAvatar.hasRealImage{
+  background:#09070b;
+}
+
+.aiCallAvatar.hasRealImage .girlPortrait,
+.aiCallAvatar.hasRealImage .girlAura{
+  display:none;
+}
+
+.aiCallAvatar.hasRealImage .girlCaption{
+  z-index:10;
+  position:absolute;
+  bottom:18px;
+  left:0;
+  right:0;
+  text-align:center;
+}
+
+.aiCallAvatar.hasRealImage.speaking #aiAvatarImage{
+  animation:avatarTalkingFloat .7s ease-in-out infinite alternate;
+}
+
+.aiCallAvatar.hasRealImage.blinking #aiAvatarImage{
+  filter:brightness(.94);
+}
+
+.aiCallAvatar.hasRealImage.blushing #aiAvatarImage{
+  filter:saturate(1.18) brightness(1.03);
+}
+
+@keyframes avatarTalkingFloat{
+  from{transform:scale(1.005) translateY(0)}
+  to{transform:scale(1.018) translateY(-2px)}
+}
+
+@keyframes avatarCuteDance{
+  0%,100%{transform:scale(1) rotate(0) translateY(0)}
+  25%{transform:scale(1.012) rotate(-1deg) translateY(-3px)}
+  50%{transform:scale(1.018) rotate(1deg) translateY(-6px)}
+  75%{transform:scale(1.012) rotate(-.7deg) translateY(-3px)}
+}
+
+.aiCallAvatar.cuteDancing #aiAvatarImage{
+  animation:avatarCuteDance 1.8s ease-in-out infinite;
+}
+
+
+/* ===== ALSON REAL AVATAR MOTION ===== */
+
+.aiCallAvatar.hasRealImage{
+  animation:
+    avatarBreathing 4s ease-in-out infinite;
+}
+
+.aiCallAvatar.hasRealImage .aiAvatarImageWrap{
+  transform-origin: 50% 55%;
+  transition:
+    transform .45s ease,
+    filter .45s ease;
+}
+
+.aiCallAvatar.hasRealImage .girlPortrait{
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aiCallAvatar.cuteSway .aiAvatarImageWrap{
+  animation:
+    avatarSway 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteBounce .aiAvatarImageWrap{
+  animation:
+    avatarBounce 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteShy .aiAvatarImageWrap{
+  animation:
+    avatarShy 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteDancing .aiAvatarImageWrap{
+  animation:
+    avatarDance 1.8s ease-in-out;
+}
+
+.aiCallAvatar.speaking .aiAvatarImageWrap{
+  animation:
+    avatarTalk 0.7s ease-in-out infinite;
+}
+
+@keyframes avatarBreathing{
+  0%,100%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.012);
+  }
+}
+
+@keyframes avatarSway{
+  0%,100%{
+    transform:rotate(0deg) translateX(0);
+  }
+  30%{
+    transform:rotate(-2deg) translateX(-5px);
+  }
+  70%{
+    transform:rotate(2deg) translateX(5px);
+  }
+}
+
+@keyframes avatarBounce{
+  0%,100%{
+    transform:translateY(0) scale(1);
+  }
+  35%{
+    transform:translateY(-9px) scale(1.015);
+  }
+  65%{
+    transform:translateY(2px) scale(.995);
+  }
+}
+
+@keyframes avatarShy{
+  0%,100%{
+    transform:rotate(0) translateX(0);
+  }
+  35%{
+    transform:rotate(-3deg) translateX(-7px);
+  }
+  65%{
+    transform:rotate(2deg) translateX(4px);
+  }
+}
+
+@keyframes avatarDance{
+  0%,100%{
+    transform:translateY(0) rotate(0deg);
+  }
+  20%{
+    transform:translateY(-8px) rotate(-3deg);
+  }
+  40%{
+    transform:translateY(2px) rotate(3deg);
+  }
+  60%{
+    transform:translateY(-7px) rotate(-2deg);
+  }
+  80%{
+    transform:translateY(1px) rotate(2deg);
+  }
+}
+
+@keyframes avatarTalk{
+  0%,100%{
+    transform:translateY(0) scale(1);
+  }
+  50%{
+    transform:translateY(-2px) scale(1.008);
+  }
+}
+
+
+/* ===== REAL AVATAR FACE OVERLAYS ===== */
+
+.aiAvatarImageWrap{
+  position:relative;
+  overflow:visible;
+}
+
+.realAvatarMouth{
+  position:absolute;
+  width:22px;
+  height:4px;
+  transform:
+    translate(-50%,-50%)
+    scaleY(.7);
+  border-radius:50%;
+  background:rgba(70,20,35,.72);
+  pointer-events:none;
+  z-index:8;
+  opacity:.7;
+  transition:
+    height .06s ease,
+    transform .06s ease;
+}
+
+.realAvatarMouth.open{
+  height:var(--mouth-open,14px);
+  transform:
+    translate(-50%,-50%)
+    scaleY(1);
+  border-radius:45%;
+}
+
+.realAvatarHand{
+  position:absolute;
+  right:10%;
+  bottom:18%;
+  z-index:20;
+  font-size:38px;
+  opacity:0;
+  transform:
+    translateY(20px)
+    scale(.7)
+    rotate(-15deg);
+  transition:
+    opacity .25s ease,
+    transform .45s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+
+.realAvatarHand.show{
+  opacity:1;
+  transform:
+    translateY(-8px)
+    scale(1)
+    rotate(8deg);
+  animation:
+    cuteHandWave 1.1s ease-in-out infinite;
+}
+
+@keyframes cuteHandWave{
+  0%,100%{
+    transform:
+      translateY(-8px)
+      scale(1)
+      rotate(8deg);
+  }
+
+  50%{
+    transform:
+      translateY(-12px)
+      scale(1.05)
+      rotate(-8deg);
+  }
+}
+
+</style>
+
+<script type="module">
+  import {
+    FaceLandmarker,
+    FilesetResolver
+  } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
+
+  window.ALSONFaceAI = {
+    landmarker: null,
+    ready: false,
+
+    async init(){
+      if(this.ready) return;
+
+      try{
+        const vision =
+          await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
+          );
+
+        this.landmarker =
+          await FaceLandmarker.createFromOptions(
+            vision,
+            {
+              baseOptions: {
+                modelAssetPath:
+                  "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+                delegate: "GPU"
+              },
+
+              runningMode: "IMAGE",
+
+              numFaces: 1,
+
+              outputFaceBlendshapes: true,
+
+              outputFacialTransformationMatrixes: true
+            }
+          );
+
+        this.ready = true;
+
+        console.log("🧠 ALSON Face AI ready");
+
+      }catch(error){
+
+        console.error(
+          "ALSON FACE AI ERROR:",
+          error
+        );
+
+      }
+    },
+
+    async analyze(image){
+
+      await this.init();
+
+      if(!this.landmarker){
+        throw new Error(
+          "Face Landmarker could not initialize"
+        );
+      }
+
+      const result =
+        this.landmarker.detect(image);
+
+      const face =
+        result?.faceLandmarks?.[0] || null;
+
+      const blend =
+        result?.faceBlendshapes?.[0]
+          ?.categories || [];
+
+      if(!face){
+        return {
+          detected: false,
+          landmarks: [],
+          blendshapes: []
+        };
+      }
+
+      const getBlend = name => {
+        const item =
+          blend.find(x => x.categoryName === name);
+
+        return item
+          ? item.score
+          : 0;
+      };
+
+      const profile = {
+
+        detected: true,
+
+        landmarks: face,
+
+        blendshapes: blend,
+
+        expressions: {
+
+          blinkLeft:
+            getBlend("eyeBlinkLeft"),
+
+          blinkRight:
+            getBlend("eyeBlinkRight"),
+
+          smileLeft:
+            getBlend("mouthSmileLeft"),
+
+          smileRight:
+            getBlend("mouthSmileRight"),
+
+          jawOpen:
+            getBlend("jawOpen"),
+
+          mouthPucker:
+            getBlend("mouthPucker"),
+
+          browUp:
+            getBlend("browInnerUp"),
+
+          cheekSquint:
+            getBlend("cheekSquintLeft")
+        },
+
+        timestamp: Date.now()
+      };
+
+      console.log(
+        "🧠 ALSON face detected",
+        profile.expressions
+      );
+
+      return profile;
+    }
+  };
+
+  window.ALSONFaceAI.init();
+</script>
+
+</head>
+
+
+<div id="jsCrash" style="display:none;position:fixed;z-index:999999;left:10px;right:10px;top:10px;background:#ff1744;color:white;padding:14px;border-radius:12px;font:14px monospace;white-space:pre-wrap;"></div>
+
+<script>
+(function(){
+  function showError(type, value){
+    const box = document.getElementById("jsCrash");
+    if(!box) return;
+    box.style.display = "block";
+    box.textContent =
+      "⚠️ ALSON AI JAVASCRIPT ERROR\n\n" +
+      type + ":\n" +
+      String(value);
+  }
+
+  window.addEventListener("error", function(e){
+    showError(
+      "ERROR",
+      e.message + "\n\n" +
+      "File: " + e.filename +
+      "\nLine: " + e.lineno +
+      "\nColumn: " + e.colno
+    );
+  });
+
+  window.addEventListener("unhandledrejection", function(e){
+    showError(
+      "PROMISE ERROR",
+      e.reason?.stack || e.reason
+    );
+  });
+})();
+</script>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+  <div class="brand">
+    <div class="logo">A</div>
+    <div class="brandText">
+      <strong>
+        ALSON AI
+        <svg class="verifiedBadge"
+     aria-label="Verified"
+     viewBox="0 0 24 24"
+     width="17"
+     height="17"
+     role="img">
+  <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
+  <path d="M10.2 15.8 6.8 12.4l1.4-1.4 2 2 5.6-5.6 1.4 1.4-7 7z"
+        fill="#fff"/>
+</svg>
+      </strong>
+      <div class="status">
+        <span class="dot"></span>
+        <span id="status" class="aiStatus">AI Assistant</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="iconBtn" id="menuBtn" aria-label="Themes">☰</button>
+</header>
+
+<div class="themePanel" id="themePanel">
+  <div class="themeTitle">🎨 ALSON AI Theme</div>
+
+  <div class="themeGrid">
+    <button class="themeChoice" data-theme="midnight">🌑 Midnight</button>
+    <button class="themeChoice" data-theme="whatsapp">🟢 WhatsApp</button>
+    <button class="themeChoice" data-theme="ocean">🔵 Ocean</button>
+    <button class="themeChoice" data-theme="violet">🟣 Violet</button>
+    <button class="themeChoice" data-theme="sunset">🌅 Sunset</button>
+    <button class="themeChoice" data-theme="light">☀️ Light</button>
+  </div>
+</div>
+
+
+<main class="chat" id="chat">
+
+  <section class="welcome" id="welcome">
+    <div class="welcomeLogo">A</div>
+
+    <h1>What's on your mind?</h1>
+
+    <p>
+      I'm ALSON AI — your assistant for coding, ideas,
+      conversations, creativity and more.
+    </p>
+
+    <div class="quick">
+      <button onclick="quick('Help me write a Node.js project')">
+        💻 Coding help
+      </button>
+
+      <button onclick="quick('Give me some ideas for a project')">
+        💡 Project ideas
+      </button>
+
+      <button onclick="quick('Explain something to me simply')">
+        🧠 Explain something
+      </button>
+
+      <button onclick="quick('Let’s have a conversation')">
+        💬 Chat with me
+      </button>
+    </div>
+  </section>
+
+</main>
+
+
+<div class="callOverlay" id="callOverlay">
+  <div class="callWindow">
+
+    <div class="callHeader">
+      <strong id="callTitle">ALSON AI</strong>
+      <button id="closeCall">✕</button>
+    </div>
+
+    <div class="avatarPickerBar">
+  <label for="aiAvatarPicker" class="avatarPickerBtn">
+    ✨ Choose AI Avatar
+  </label>
+  <input
+    id="aiAvatarPicker"
+    type="file"
+    accept="image/*"
+    hidden
+  >
+</div>
+
+<div class="videoStage">
+      <video id="localVideo" autoplay playsinline muted></video>
+
+      <div class="aiCallAvatar" id="aiCallAvatar">
+      <div class="aiAvatarImageWrap" id="aiAvatarImageWrap">
+  <img id="aiAvatarImage" alt="ALSON AI avatar">
+</div>
+
+
+        <div class="girlAura"></div>
+        <div class="girlPortrait" id="girlPortrait" role="img" aria-label="Animated adult AI companion">
+          <div class="girlEyeBlink"></div>
+          <div class="girlMouth" id="girlMouth"></div>
+          <div class="girlHand"></div>
+        </div>
+        <div class="girlCaption">
+          ALSON AI 💗
+          <small id="girlExpression">Waiting for you…</small>
+        </div>
+        <strong id="callStatus">Ready</strong>
+      </div>
+    </div>
+
+    <div class="voiceSettings">
+
+      <label for="voiceStyle">✨ ALSON Voice Style</label>
+
+      <select id="voiceStyle">
+        <option value="default">🎀 Cute + Sweet + Cozy</option>
+        <option value="cute">🎀 Cute — Sweet & Playful</option>
+        <option value="sweet">💕 Sweet — Soft & Warm</option>
+        <option value="cool">😎 Cool — Calm & Confident</option>
+        <option value="romantic">💜 Romantic — Warm & Affectionate</option>
+      </select>
+
+      <div class="voiceInfo">
+        🎙️ Gemini Live Voice Chat
+        <span>Change style anytime</span>
+      </div>
+
+    </div>
+
+    <div class="callControls">
+      <button id="micToggle">🎙️</button>
+      <button id="cameraToggle">📷</button>
+      <button id="endCall" class="endCall">☎</button>
+    </div>
+
+    <div class="voiceTranscript" id="voiceTranscript">
+      Tap the microphone and speak to ALSON AI.
+    </div>
+
+  </div>
+</div>
+
+<div class="composerWrap">
+
+  <div class="composer">
+    <textarea
+      id="input"
+      rows="1"
+      placeholder="Message ALSON AI..."
+      autocomplete="off"
+    ></textarea>
+
+    <button class="send" id="send" disabled>↑</button>
+  </div>
+
+  <div class="tools">
+    <button class="mode active">🤖 Assistant</button>
+    <button class="mode">📱 WhatsApp</button>
+    <button class="mode" id="charactersBtn">💜 Characters</button>
+    <button class="mode" id="voiceBtn">🎙️ Voice</button>
+    <button class="mode" id="videoBtn">📹 Video</button>
+  </div>
+
+  <div class="nav">
+    <button class="active">Chat</button>
+    <button>History</button>
+    <button>Settings</button>
+  </div>
+
+</div>
+
+</div>
+
+
+<script>
+window.addEventListener("error", function(e){
+  console.error(
+    "ALSON FRONTEND ERROR:",
+    e.message,
+    "at",
+    e.filename,
+    e.lineno,
+    e.colno
+  );
+
+  const status = document.getElementById("callStatus");
+
+  if(status){
+    status.textContent =
+      "⚠️ JS error: " + e.message;
+  }
+});
+
+window.addEventListener("unhandledrejection", function(e){
+  console.error(
+    "ALSON UNHANDLED PROMISE:",
+    e.reason
+  );
+});
+
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const chat = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
+const statusEl = document.getElementById("status");
+
+function updateButton(){
+  send.disabled = !input.value.trim();
+}
+
+input.addEventListener("input",()=>{
+  input.style.height="auto";
+  input.style.height=Math.min(input.scrollHeight,130)+"px";
+  updateButton();
+});
+
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+send.addEventListener("click",sendMessage);
+
+function quick(text){
+  input.value=text;
+  updateButton();
+  sendMessage();
+}
+
+function addMessage(text,type){
+  if(welcome) welcome.remove();
+
+  const row=document.createElement("div");
+  row.className=`message ${type}`;
+
+  row.innerHTML=`
+    ${type==="ai" ? '<div class="avatar">AI</div>' : ""}
+    <div class="bubble"></div>
+  `;
+
+  row.querySelector(".bubble").textContent=text;
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
+
+  return row;
+}
+
+function addTyping(){
+  if(welcome) welcome.remove();
+
+  const row=document.createElement("div");
+  row.className="message ai";
+  row.id="typing";
+
+  row.innerHTML=`
+    <div class="avatar">AI</div>
+    <div class="bubble">
+      <div class="typing">
+        <i></i><i></i><i></i>
+      </div>
+    </div>
+  `;
+
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+const conversationHistory = [];
+
+async function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMessage(text, "user");
+
+  input.value = "";
+  input.style.height = "auto";
+  updateButton();
+
+  addTyping();
+
+  const historyForRequest = conversationHistory.slice(-20);
+
+  conversationHistory.push({
+    role: "user",
+    text: text
+  });
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text,
+        history: historyForRequest
+      })
+    });
+
+    const typing = document.getElementById("typing");
+    if(typing) typing.remove();
+
+    if(!response.ok){
+      let errorMessage = "Request failed.";
+
+      try {
+        const data = await response.json();
+        errorMessage = data.error || errorMessage;
+      } catch {}
+
+      conversationHistory.pop();
+      throw new Error(errorMessage);
+    }
+
+    if(!response.body){
+      conversationHistory.pop();
+      throw new Error("Streaming is not supported by this browser.");
+    }
+
+    const row = addMessage("", "ai");
+    const bubble = row.querySelector(".bubble");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let answer = "";
+
+    while(true){
+      const { value, done } = await reader.read();
+
+      if(done) break;
+
+      answer += decoder.decode(value, {
+        stream: true
+      });
+
+      bubble.textContent = answer;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    answer += decoder.decode();
+    bubble.textContent = answer;
+
+    conversationHistory.push({
+      role: "model",
+      text: answer
+    });
+
+    if(typeof speakAIResponse === "function"){
+      speakAIResponse(answer);
+    }
+
+    chat.scrollTop = chat.scrollHeight;
+
+  } catch(error) {
+    const typing = document.getElementById("typing");
+    if(typing) typing.remove();
+
+    addMessage(
+      "⚠️ " + (error.message || "Something went wrong."),
+      "ai"
+    );
+  }
+}
+
+
+/* THEME SYSTEM */
+const themePanel = document.getElementById("themePanel");
+const menuBtn = document.getElementById("menuBtn");
+const themeChoices = document.querySelectorAll(".themeChoice");
+
+function applyTheme(theme){
+  if(theme === "midnight"){
+    document.body.removeAttribute("data-theme");
+  }else{
+    document.body.dataset.theme = theme;
+  }
+
+  localStorage.setItem("alson-ai-theme", theme);
+
+  themeChoices.forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === theme);
+  });
+}
+
+const savedTheme = localStorage.getItem("alson-ai-theme") || "midnight";
+applyTheme(savedTheme);
+
+menuBtn.addEventListener("click", () => {
+  themePanel.classList.toggle("open");
+});
+
+themeChoices.forEach(btn => {
+  btn.addEventListener("click", () => {
+    applyTheme(btn.dataset.theme);
+    themePanel.classList.remove("open");
+  });
+});
+
+</script>
+
+
+<script>
+const callOverlay = document.getElementById("callOverlay");
+const voiceBtn = document.getElementById("voiceBtn");
+const videoBtn = document.getElementById("videoBtn");
+const closeCall = document.getElementById("closeCall");
+const endCall = document.getElementById("endCall");
+const micToggle = document.getElementById("micToggle");
+const cameraToggle = document.getElementById("cameraToggle");
+const localVideo = document.getElementById("localVideo");
+const callStatus = document.getElementById("callStatus");
+const voiceTranscript = document.getElementById("voiceTranscript");
+
+const voiceStyle = document.getElementById("voiceStyle");
+
+
+
+let callStream = null;
+let micEnabled = true;
+let cameraEnabled = true;
+let voiceMode = false;
+let isSpeaking = false;
+let restartingRecognition = false;
+
+
+
+/*
+ * Clean text before sending it to TTS.
+ *
+ * ALSON AI can still display:
+ *
+ *   Hi 😂 how are you?
+ *
+ * But the voice says:
+ *
+ *   Hi, how are you?
+ */
+function cleanForSpeech(text){
+
+  if(!text) return "";
+
+  let clean = text;
+
+  // Remove fenced code blocks.
+  clean = clean.replace(/```[\s\S]*?```/g, " ");
+
+  // Remove inline code.
+  clean = clean.replace(/`([^`]*)`/g, "$1");
+
+  // Remove markdown images.
+  clean = clean.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
+
+  // Convert markdown links to their visible text.
+  clean = clean.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+
+  // Remove URLs.
+  clean = clean.replace(
+    /https?:\/\/\S+|www\.\S+/gi,
+    " "
+  );
+
+  // Remove markdown formatting.
+  clean = clean.replace(/[*_~>#]+/g, " ");
+
+  // Remove emojis and pictographic symbols.
+  clean = clean.replace(
+    /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,
+    " "
+  );
+
+  // Remove excessive symbols.
+  clean = clean.replace(
+    /[{}[\]<>|^~`]/g,
+    " "
+  );
+
+  // Normalize whitespace.
+  clean = clean.replace(/\s+/g, " ").trim();
+
+  return clean;
+}
+
+
+let selectedAIAvatarURL =
+  localStorage.getItem("alson_ai_avatar") || "";
+
+let avatarDanceTimer = null;
+let avatarMotionTimer = null;
+let avatarFaceProfile = null;
+let avatarImageElement = null;
+
+
+
+/* ===== ALSON REAL PIXEL AVATAR ENGINE ===== */
+
+let pixelAvatarCanvas = null;
+let pixelAvatarCtx = null;
+let pixelAvatarRAF = null;
+let pixelAvatarReady = false;
+let pixelAvatarLastTime = 0;
+let pixelAvatarMouthLevel = 0;
+let pixelAvatarTargetMouth = 0;
+let pixelAvatarBlink = 0;
+let pixelAvatarSmile = 0;
+let pixelAvatarTilt = 0;
+
+function initPixelAvatar(){
+
+  const img = document.getElementById("aiAvatarImage");
+  const wrap = document.getElementById("aiAvatarImageWrap");
+
+  if(!img || !wrap || !img.naturalWidth) return false;
+
+  let canvas = document.getElementById("alsonPixelAvatar");
+
+  if(!canvas){
+
+    canvas = document.createElement("canvas");
+    canvas.id = "alsonPixelAvatar";
+
+    canvas.style.position = "absolute";
+    canvas.style.inset = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.objectFit = "contain";
+    canvas.style.pointerEvents = "none";
+    img.style.opacity = "0";
+    canvas.style.zIndex = "5";
+
+    wrap.appendChild(canvas);
+  }
+
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+
+  pixelAvatarCanvas = canvas;
+  pixelAvatarCtx = canvas.getContext("2d", {
+    alpha: true,
+    willReadFrequently: false
+  });
+
+  pixelAvatarReady = true;
+
+  return true;
+}
+
+
+function getAvatarFacePoint(name){
+
+  const profile = avatarFaceProfile;
+
+  if(!profile?.detected) return null;
+
+  const points = profile.landmarks || [];
+
+  const indexes = {
+
+    mouthTop: 13,
+    mouthBottom: 14,
+
+    mouthLeft: 78,
+    mouthRight: 308,
+
+    leftEyeTop: 159,
+    leftEyeBottom: 145,
+
+    rightEyeTop: 386,
+    rightEyeBottom: 374,
+
+    nose: 1
+  };
+
+  const index = indexes[name];
+
+  if(index === undefined) return null;
+
+  return points[index] || null;
+}
+
+
+function drawPixelAvatar(){
+
+  if(!pixelAvatarReady) return;
+
+  const img = document.getElementById("aiAvatarImage");
+
+  if(!img || !img.complete) return;
+
+  const canvas = pixelAvatarCanvas;
+  const ctx = pixelAvatarCtx;
+
+  if(!canvas || !ctx) return;
+
+  const now = performance.now();
+
+  if(!pixelAvatarLastTime){
+    pixelAvatarLastTime = now;
+  }
+
+  const dt =
+    Math.min(40, now - pixelAvatarLastTime);
+
+  pixelAvatarLastTime = now;
+
+
+  /* Smooth mouth animation */
+
+  pixelAvatarMouthLevel +=
+    (pixelAvatarTargetMouth -
+     pixelAvatarMouthLevel) *
+    Math.min(1, dt / 45);
+
+
+  /*
+   * Draw the original photograph first.
+   * The image remains completely photorealistic.
+   */
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.drawImage(
+    img,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /*
+   * Actual pixel-level facial shading.
+   *
+   * Rather than placing a fake mouth on top,
+   * we locally manipulate pixels around the
+   * detected mouth region.
+   */
+
+  const top = getAvatarFacePoint("mouthTop");
+  const bottom = getAvatarFacePoint("mouthBottom");
+  const left = getAvatarFacePoint("mouthLeft");
+  const right = getAvatarFacePoint("mouthRight");
+
+  if(top && bottom && left && right){
+
+    const cx =
+      ((left.x + right.x) / 2) *
+      canvas.width;
+
+    const cy =
+      ((top.y + bottom.y) / 2) *
+      canvas.height;
+
+    const mouthWidth =
+      Math.abs(right.x - left.x) *
+      canvas.width;
+
+    const mouthHeight =
+      Math.abs(bottom.y - top.y) *
+      canvas.height;
+
+
+    /*
+     * Subtle real-pixel mouth shadow.
+     *
+     * This is deliberately restrained so the
+     * original person's lips remain visible.
+     */
+
+    if(pixelAvatarMouthLevel > 0.05){
+
+      const radiusX =
+        Math.max(8, mouthWidth * 0.34);
+
+      const radiusY =
+        Math.max(
+          3,
+          mouthHeight * 0.75 +
+          pixelAvatarMouthLevel * 7
+        );
+
+      ctx.save();
+
+      ctx.beginPath();
+
+      ctx.ellipse(
+        cx,
+        cy,
+        radiusX,
+        radiusY,
+        0,
+        0,
+        Math.PI * 2
+      );
+
+      ctx.clip();
+
+      ctx.globalCompositeOperation =
+        "multiply";
+
+      ctx.fillStyle =
+        `rgba(70,20,35,${
+          0.06 +
+          pixelAvatarMouthLevel * 0.18
+        })`;
+
+      ctx.fillRect(
+        cx - radiusX,
+        cy - radiusY,
+        radiusX * 2,
+        radiusY * 2
+      );
+
+      ctx.restore();
+    }
+  }
+
+
+  /*
+   * Tiny organic breathing movement.
+   * This moves the rendered pixels rather than
+   * adding an external animated face.
+   */
+
+  const breathing =
+    Math.sin(now / 900) * 0.003;
+
+  if(Math.abs(breathing) > 0){
+
+    /*
+     * Keep this subtle. The actual facial
+     * deformation will be handled separately
+     * from the global body motion.
+     */
+  }
+
+
+  pixelAvatarRAF =
+    requestAnimationFrame(drawPixelAvatar);
+}
+
+
+function startPixelAvatar(){
+
+  if(!initPixelAvatar()) return;
+
+  if(pixelAvatarRAF){
+    cancelAnimationFrame(pixelAvatarRAF);
+  }
+
+  pixelAvatarLastTime = 0;
+
+  drawPixelAvatar();
+}
+
+
+function stopPixelAvatar(){
+
+  if(pixelAvatarRAF){
+
+    cancelAnimationFrame(
+      pixelAvatarRAF
+    );
+
+    pixelAvatarRAF = null;
+  }
+
+  pixelAvatarReady = false;
+}
+
+
+function setPixelAvatarMouth(level){
+
+  pixelAvatarTargetMouth =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        Number(level) || 0
+      )
+    );
+}
+
+
+function triggerPixelBlink(){
+
+  pixelAvatarBlink = 1;
+
+  setTimeout(() => {
+    pixelAvatarBlink = 0;
+  }, 130);
+}
+
+
+/* Automatically start the pixel renderer whenever
+   the selected photograph finishes loading. */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const img =
+      document.getElementById(
+        "aiAvatarImage"
+      );
+
+    if(img){
+
+      img.addEventListener(
+        "load",
+        () => {
+
+          setTimeout(
+            startPixelAvatar,
+            100
+          );
+
+        }
+      );
+    }
+  }
+);
+
+
+/* ===== REAL IMAGE AVATAR ===== */
+
+function applyAIAvatar(url){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  const wrap =
+    document.getElementById("aiAvatarImageWrap");
+
+  const img =
+    document.getElementById("aiAvatarImage");
+
+  if(!avatar || !wrap || !img) return;
+
+  if(!url){
+
+    wrap.classList.remove("active");
+
+    avatar.classList.remove(
+      "hasRealImage",
+      "faceAnalyzed"
+    );
+
+    img.removeAttribute("src");
+
+    avatarFaceProfile = null;
+    avatarImageElement = null;
+
+    return;
+  }
+
+  img.onload = async () => {
+
+    avatarImageElement = img;
+
+    avatar.classList.add("hasRealImage");
+
+    try{
+
+      if(window.ALSONFaceAI){
+
+        avatarFaceProfile =
+          await window.ALSONFaceAI.analyze(img);
+
+        if(avatarFaceProfile?.detected){
+
+          avatar.classList.add("faceAnalyzed");
+
+          console.log(
+            "🧠 ALSON avatar face profile:",
+            avatarFaceProfile.expressions
+          );
+
+          const expression =
+            document.getElementById("girlExpression");
+
+          if(expression){
+            expression.textContent =
+              "Face detected 💗";
+          }
+
+        }else{
+
+          console.warn(
+            "⚠️ No face detected in selected avatar"
+          );
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Avatar face analysis error:",
+        error
+      );
+
+    }
+
+  };
+
+  img.src = url;
+
+  wrap.classList.add("active");
+  avatar.classList.add("hasRealImage");
+
+  startCuteAvatarMotion();
+}
+
+
+/* ===== CUTE REAL-IMAGE MOTION ===== */
+
+function startCuteAvatarMotion(){
+
+  stopCuteAvatarMotion();
+
+  avatarMotionTimer = setInterval(() => {
+
+    const avatar =
+      document.getElementById("aiCallAvatar");
+
+    if(
+      !avatar ||
+      !avatar.classList.contains("hasRealImage")
+    ){
+      return;
+    }
+
+    const roll = Math.random();
+
+    avatar.classList.remove(
+      "cuteSway",
+      "cuteBounce",
+      "cuteShy"
+    );
+
+    if(roll < 0.45){
+
+      avatar.classList.add("cuteSway");
+
+    }else if(roll < 0.75){
+
+      avatar.classList.add("cuteBounce");
+
+    }else{
+
+      avatar.classList.add("cuteShy");
+
+    }
+
+    setTimeout(() => {
+
+      avatar.classList.remove(
+        "cuteSway",
+        "cuteBounce",
+        "cuteShy"
+      );
+
+    }, 1800);
+
+  }, 4200);
+}
+
+
+function stopCuteAvatarMotion(){
+
+  if(avatarMotionTimer){
+
+    clearInterval(
+      avatarMotionTimer
+    );
+
+    avatarMotionTimer = null;
+  }
+
+  document
+    .getElementById("aiCallAvatar")
+    ?.classList.remove(
+      "cuteSway",
+      "cuteBounce",
+      "cuteShy"
+    );
+}
+
+
+/* ===== CUTE DANCE ===== */
+
+function startCuteAvatarDance(){
+
+  stopCuteAvatarDance();
+
+  avatarDanceTimer =
+    setInterval(() => {
+
+      const avatar =
+        document.getElementById("aiCallAvatar");
+
+      if(
+        !avatar ||
+        !avatar.classList.contains("hasRealImage")
+      ){
+        return;
+      }
+
+      if(Math.random() < 0.35){
+
+        avatar.classList.add(
+          "cuteDancing"
+        );
+
+        setTimeout(() => {
+
+          avatar.classList.remove(
+            "cuteDancing"
+          );
+
+        }, 1800);
+      }
+
+    }, 5000);
+}
+
+
+function stopCuteAvatarDance(){
+
+  if(avatarDanceTimer){
+
+    clearInterval(
+      avatarDanceTimer
+    );
+
+    avatarDanceTimer = null;
+  }
+
+  document
+    .getElementById("aiCallAvatar")
+    ?.classList.remove(
+      "cuteDancing"
+    );
+}
+
+
+/* ===== AVATAR PICKER ===== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const picker =
+      document.getElementById(
+        "aiAvatarPicker"
+      );
+
+    if(picker){
+
+      picker.addEventListener(
+        "change",
+        event => {
+
+          const file =
+            event.target.files?.[0];
+
+          if(
+            !file ||
+            !file.type.startsWith("image/")
+          ){
+            return;
+          }
+
+          const reader =
+            new FileReader();
+
+          reader.onload = () => {
+
+            const url =
+              String(
+                reader.result || ""
+              );
+
+            try{
+
+              localStorage.setItem(
+                "alson_ai_avatar",
+                url
+              );
+
+              selectedAIAvatarURL =
+                url;
+
+            }catch(error){
+
+              console.warn(
+                "Could not persist avatar:",
+                error
+              );
+
+              selectedAIAvatarURL =
+                url;
+            }
+
+            applyAIAvatar(url);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      );
+    }
+
+    if(selectedAIAvatarURL){
+
+      applyAIAvatar(
+        selectedAIAvatarURL
+      );
+    }
+  }
+);
+
+
+async function openCall(type){
+
+  const isVideo = type === "video";
+
+  voiceMode = true;
+  isSpeaking = false;
+
+  callOverlay.classList.add("open");
+
+  const title = document.getElementById("callTitle");
+  const avatar = document.getElementById("aiCallAvatar");
+
+  if(title){
+    title.textContent =
+      isVideo
+        ? "ALSON AI • Video Call"
+        : "ALSON AI • Continuous Voice";
+  }
+
+  if(localVideo){
+    localVideo.style.display =
+      isVideo ? "block" : "none";
+  }
+
+  /*
+   * Keep the AI avatar visible.
+   * The camera is only the user's local video.
+   */
+  if(avatar){
+    avatar.style.display = "flex";
+    avatar.classList.remove("speaking");
+  }
+
+  if(!isVideo){
+
+    callStatus.textContent =
+      "Connecting to ALSON AI...";
+
+    voiceTranscript.textContent =
+      "Speak naturally. ALSON AI will keep listening.";
+
+    startAvatarExpressions();
+    startVoiceRecognition();
+    return;
+  }
+
+  callStatus.textContent =
+    "Requesting camera...";
+
+  try{
+
+    callStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: true
+      });
+
+    if(localVideo){
+      localVideo.srcObject = callStream;
+      localVideo.style.display = "block";
+    }
+
+    /*
+     * AI avatar remains the main call character.
+     */
+    if(avatar){
+      avatar.style.display = "flex";
+    }
+
+    callStatus.textContent =
+      "Connecting to ALSON AI...";
+
+    startAvatarExpressions();
+
+    /*
+     * Gemini Live uses the microphone from the
+     * existing video-call stream.
+     */
+    await startLiveVoice();
+
+    callStatus.textContent =
+      "🔴 Listening...";
+
+  }catch(error){
+
+    console.error(
+      "VIDEO CALL ERROR:",
+      error
+    );
+
+    callStatus.textContent =
+      "Camera/microphone unavailable";
+
+    voiceTranscript.textContent =
+      error?.message ||
+      "Please allow camera and microphone access.";
+
+    if(callStream){
+      callStream.getTracks().forEach(track => {
+        try{ track.stop(); }catch{}
+      });
+
+      callStream = null;
+    }
+  }
+}
+
+function floatTo16BitPCM(float32){
+  const buffer = new ArrayBuffer(float32.length * 2);
+  const view = new DataView(buffer);
+
+  for(let i = 0; i < float32.length; i++){
+    const sample =
+      Math.max(-1, Math.min(1, float32[i]));
+
+    view.setInt16(
+      i * 2,
+      sample < 0
+        ? sample * 0x8000
+        : sample * 0x7FFF,
+      true
+    );
+  }
+
+  return new Uint8Array(buffer);
+}
+
+function downsampleBuffer(buffer, inputRate, outputRate){
+
+  if(inputRate === outputRate){
+    return buffer;
+  }
+
+  const ratio =
+    inputRate / outputRate;
+
+  const newLength =
+    Math.round(buffer.length / ratio);
+
+  const result =
+    new Float32Array(newLength);
+
+  let offsetResult = 0;
+  let offsetBuffer = 0;
+
+  while(offsetResult < result.length){
+
+    const nextOffsetBuffer =
+      Math.round((offsetResult + 1) * ratio);
+
+    let accum = 0;
+    let count = 0;
+
+    for(
+      let i = offsetBuffer;
+      i < nextOffsetBuffer &&
+      i < buffer.length;
+      i++
+    ){
+      accum += buffer[i];
+      count++;
+    }
+
+    result[offsetResult] =
+      count ? accum / count : 0;
+
+    offsetResult++;
+    offsetBuffer =
+      nextOffsetBuffer;
+  }
+
+  return result;
+}
+
+function arrayBufferToBase64(buffer){
+
+  const bytes =
+    new Uint8Array(buffer);
+
+  let binary = "";
+
+  const chunk = 0x8000;
+
+  for(
+    let i = 0;
+    i < bytes.length;
+    i += chunk
+  ){
+    binary += String.fromCharCode(
+      ...bytes.subarray(
+        i,
+        i + chunk
+      )
+    );
+  }
+
+  return btoa(binary);
+}
+
+function base64ToBytes(base64){
+
+  const binary =
+    atob(base64);
+
+  const bytes =
+    new Uint8Array(binary.length);
+
+  for(
+    let i = 0;
+    i < binary.length;
+    i++
+  ){
+    bytes[i] =
+      binary.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+
+/* ===== ALSON AI COMPANION EXPRESSIONS ===== */
+
+let avatarBlinkTimer = null;
+let avatarSpeakingTimer = null;
+
+
+/* ===== REAL IMAGE FACE MOTION ===== */
+
+let avatarMouthTimer = null;
+let avatarHandTimer = null;
+
+function updateRealAvatarMouth(open = false){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  const img =
+    document.getElementById("aiAvatarImage");
+
+  if(
+    !avatar ||
+    !img ||
+    !avatar.classList.contains("hasRealImage")
+  ){
+    return;
+  }
+
+  /*
+   * Use the detected mouth landmarks to determine
+   * where the mouth is located in the selected image.
+   */
+  const profile = avatarFaceProfile;
+
+  if(!profile?.detected || !profile.landmarks?.length){
+    return;
+  }
+
+  const landmarks = profile.landmarks;
+
+  /*
+   * MediaPipe mouth region:
+   * upper/lower lip landmarks are used to estimate
+   * the center of the mouth.
+   */
+  const points = [
+    landmarks[13],
+    landmarks[14],
+    landmarks[78],
+    landmarks[308]
+  ].filter(Boolean);
+
+  if(!points.length) return;
+
+  const x =
+    points.reduce((sum,p) => sum + p.x, 0) /
+    points.length;
+
+  const y =
+    points.reduce((sum,p) => sum + p.y, 0) /
+    points.length;
+
+  let mouth =
+    document.getElementById("realAvatarMouth");
+
+  if(!mouth){
+
+    mouth =
+      document.createElement("div");
+
+    mouth.id =
+      "realAvatarMouth";
+
+    mouth.className =
+      "realAvatarMouth";
+
+    const wrap =
+      document.getElementById(
+        "aiAvatarImageWrap"
+      );
+
+    if(!wrap) return;
+
+    wrap.appendChild(mouth);
+  }
+
+  mouth.style.left =
+    `${x * 100}%`;
+
+  mouth.style.top =
+    `${y * 100}%`;
+
+  mouth.classList.toggle(
+    "open",
+    open
+  );
+
+  mouth.style.setProperty(
+    "--mouth-open",
+    `${open ? 12 + Math.random() * 14 : 2}px`
+  );
+}
+
+
+function startRealAvatarMouth(){
+
+  if(avatarMouthTimer){
+    clearInterval(avatarMouthTimer);
+  }
+
+  avatarMouthTimer =
+    setInterval(() => {
+
+      const avatar =
+        document.getElementById(
+          "aiCallAvatar"
+        );
+
+      if(
+        !avatar ||
+        !avatar.classList.contains(
+          "speaking"
+        )
+      ){
+        updateRealAvatarMouth(false);
+        return;
+      }
+
+      /*
+       * Small randomized opening gives the
+       * detected mouth a speech-like motion.
+       */
+      updateRealAvatarMouth(
+        Math.random() > 0.25
+      );
+
+    }, 85);
+}
+
+
+function stopRealAvatarMouth(){
+
+  if(avatarMouthTimer){
+
+    clearInterval(
+      avatarMouthTimer
+    );
+
+    avatarMouthTimer = null;
+  }
+
+  updateRealAvatarMouth(false);
+}
+
+
+/* ===== CUTE HAND REACTION ===== */
+
+function spawnAvatarHandReaction(){
+
+  const avatar =
+    document.getElementById(
+      "aiCallAvatar"
+    );
+
+  if(
+    !avatar ||
+    !avatar.classList.contains(
+      "hasRealImage"
+    )
+  ){
+    return;
+  }
+
+  let hand =
+    document.getElementById(
+      "realAvatarHand"
+    );
+
+  if(!hand){
+
+    hand =
+      document.createElement("div");
+
+    hand.id =
+      "realAvatarHand";
+
+    hand.className =
+      "realAvatarHand";
+
+    hand.textContent = "🫶";
+
+    avatar.appendChild(hand);
+  }
+
+  hand.classList.add("show");
+
+  setTimeout(() => {
+    hand.classList.remove("show");
+  }, 1700);
+}
+
+
+function startAvatarHandReactions(){
+
+  if(avatarHandTimer){
+    clearInterval(
+      avatarHandTimer
+    );
+  }
+
+  avatarHandTimer =
+    setInterval(() => {
+
+      if(
+        Math.random() < 0.18
+      ){
+        spawnAvatarHandReaction();
+      }
+
+    }, 5500);
+}
+
+
+function stopAvatarHandReactions(){
+
+  if(avatarHandTimer){
+
+    clearInterval(
+      avatarHandTimer
+    );
+
+    avatarHandTimer = null;
+  }
+
+  document
+    .getElementById(
+      "realAvatarHand"
+    )
+    ?.classList.remove("show");
+}
+
+
+/* ===== START ALL REAL AVATAR MOTION ===== */
+
+function startRealAvatarMotion(){
+
+  startRealAvatarMouth();
+  startAvatarHandReactions();
+
+}
+
+
+function stopRealAvatarMotion(){
+
+  stopRealAvatarMouth();
+  stopAvatarHandReactions();
+
+}
+
+
+function setAvatarSpeaking(active){
+
+  const avatar = document.getElementById("aiCallAvatar");
+  const portrait = document.getElementById("girlPortrait");
+
+  if(!avatar || !portrait) return;
+
+  avatar.classList.toggle("speaking", active);
+  portrait.classList.toggle("speaking", active);
+
+  if(active){
+    startRealAvatarMouth();
+
+    if(window.ALSONPixelAudio){
+      window.ALSONPixelAudio.active = true;
+    }
+
+    // PCM playback now drives the mouth level.
+
+  }else{
+
+    stopRealAvatarMouth();
+
+    if(window.ALSONPixelAudio){
+      window.ALSONPixelAudio.active = false;
+    }
+
+    setPixelAvatarMouth(0);
+  }
+
+  if(avatarSpeakingTimer){
+    clearInterval(avatarSpeakingTimer);
+    avatarSpeakingTimer = null;
+  }
+
+  if(active){
+
+    avatarSpeakingTimer = setInterval(() => {
+
+      if(!portrait.classList.contains("speaking")){
+        return;
+      }
+
+      const mouth = document.getElementById("girlMouth");
+
+      if(mouth){
+        mouth.style.setProperty(
+          "--mouth-open",
+          `${6 + Math.random() * 12}px`
+        );
+      }
+
+    }, 80);
+  }
+}
+
+function avatarBlink(){
+
+  const portrait =
+    document.getElementById("girlPortrait");
+
+  if(!portrait) return;
+
+  portrait.classList.add("blinking");
+
+  setTimeout(() => {
+    portrait.classList.remove("blinking");
+  }, 120);
+}
+
+function scheduleAvatarBlink(){
+
+  if(avatarBlinkTimer){
+    clearTimeout(avatarBlinkTimer);
+  }
+
+  avatarBlinkTimer = setTimeout(() => {
+
+    avatarBlink();
+
+    scheduleAvatarBlink();
+
+  }, 2500 + Math.random() * 4500);
+}
+
+function setAvatarBlush(active = true){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(avatar){
+    avatar.classList.toggle("blushing", active);
+  }
+}
+
+function spawnHeart(){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(!avatar) return;
+
+  const heart =
+    document.createElement("span");
+
+  heart.className = "girlHeart";
+
+  heart.textContent =
+    Math.random() > .5 ? "💗" : "💕";
+
+  heart.style.left =
+    `${25 + Math.random() * 50}%`;
+
+  avatar.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 3600);
+}
+
+function avatarReaction(){
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(!avatar) return;
+
+  const roll = Math.random();
+
+  if(roll < .5){
+
+    setAvatarBlush(true);
+
+    if(expression){
+      expression.textContent = "Aww… 💗";
+    }
+
+  }else if(roll < .75){
+
+    avatar.classList.add("blushing");
+    avatar.classList.add("shy");
+
+    if(expression){
+      expression.textContent = "Hehe… 💕";
+    }
+
+    setTimeout(() => {
+
+      avatar.classList.remove("shy");
+
+      if(expression){
+        expression.textContent = "I'm listening…";
+      }
+
+    }, 2600);
+
+  }else{
+
+    setAvatarBlush(false);
+
+    if(expression){
+      expression.textContent = "I'm listening…";
+    }
+  }
+
+  if(Math.random() < .45){
+    spawnHeart();
+  }
+}
+
+function startAvatarExpressions(){
+
+  scheduleAvatarBlink();
+  startRealAvatarMotion();
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  if(expression){
+    expression.textContent =
+      "I'm listening…";
+  }
+}
+
+function stopAvatarExpressions(){
+
+  stopRealAvatarMotion();
+
+  if(avatarBlinkTimer){
+    clearTimeout(avatarBlinkTimer);
+    avatarBlinkTimer = null;
+  }
+
+  if(avatarSpeakingTimer){
+    clearInterval(avatarSpeakingTimer);
+    avatarSpeakingTimer = null;
+  }
+
+  setAvatarSpeaking(false);
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(avatar){
+    avatar.classList.remove(
+      "blushing",
+      "shy",
+      "speaking"
+    );
+  }
+}
+
+/* ===== GEMINI LIVE STATE ===== */
+
+let liveSocket = null;
+let liveAudioContext = null;
+let liveMediaStream = null;
+let liveSource = null;
+let liveProcessor = null;
+let livePlaybackContext = null;
+let livePlaybackTime = 0;
+let liveAudioSources = new Set();
+let liveConnected = false;
+let liveInputStarted = false;
+
+function liveSetStatus(text){
+  const status = document.getElementById("callStatus");
+
+  if(status){
+    status.textContent = text || "";
+  }
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  if(expression && text){
+    expression.textContent = text;
+  }
+}
+
+function playLivePCM(base64){
+
+  try{
+
+    const bytes =
+      base64ToBytes(base64);
+
+    const samples =
+      new Int16Array(
+        bytes.buffer,
+        bytes.byteOffset,
+        Math.floor(
+          bytes.byteLength / 2
+        )
+      );
+
+    if(!livePlaybackContext){
+
+      livePlaybackContext =
+        new AudioContext();
+
+    }
+
+    const ctx =
+      livePlaybackContext;
+
+    if(ctx.state === "suspended"){
+      ctx.resume();
+    }
+
+    const audioBuffer =
+      ctx.createBuffer(
+        1,
+        samples.length,
+        24000
+      );
+
+    const channel =
+      audioBuffer.getChannelData(0);
+
+    for(
+      let i = 0;
+      i < samples.length;
+      i++
+    ){
+      channel[i] =
+        samples[i] / 32768;
+    }
+
+    const source =
+      ctx.createBufferSource();
+
+    source.buffer =
+      audioBuffer;
+
+    source.connect(ctx.destination);
+
+    // Measure the real PCM chunk before scheduling playback.
+    let sumSquares = 0;
+    let peak = 0;
+
+    for (let i = 0; i < channel.length; i++) {
+      const value = channel[i];
+      sumSquares += value * value;
+      peak = Math.max(peak, Math.abs(value));
+    }
+
+    const rms = channel.length
+      ? Math.sqrt(sumSquares / channel.length)
+      : 0;
+
+    const mouthLevel = Math.max(
+      0,
+      Math.min(1, rms * 5.5 + peak * 0.18)
+    );
+
+    setPixelAvatarMouth(mouthLevel);
+
+    // Smoothly return toward closed lips as this chunk ends.
+    const chunkDuration = audioBuffer.duration;
+    setTimeout(() => {
+      if (liveAudioSources.size <= 1) {
+        setPixelAvatarMouth(0);
+      }
+    }, Math.max(30, chunkDuration * 1000));
+
+    liveAudioSources.add(source);
+
+    source.onended = () => {
+      liveAudioSources.delete(source);
+    };
+
+    const now =
+      ctx.currentTime;
+
+    if(livePlaybackTime < now){
+      livePlaybackTime =
+        now + 0.03;
+    }
+
+    source.start(
+      livePlaybackTime
+    );
+
+    livePlaybackTime +=
+      audioBuffer.duration;
+
+  }catch(error){
+
+    console.error(
+      "LIVE AUDIO PLAYBACK ERROR:",
+      error
+    );
+
+  }
+}
+
+async function startLiveVoice(){
+
+  if(liveInputStarted){
+    return;
+  }
+
+  try{
+
+    liveSetStatus(
+      "Connecting to ALSON AI..."
+    );
+
+    const protocol =
+      location.protocol === "https:"
+        ? "wss"
+        : "ws";
+
+    const selectedVoiceStyle =
+      voiceStyle?.value ||
+      localStorage.getItem("alson-ai-live-style") || "default" ||
+      "default";
+
+    if(voiceStyle){
+      voiceStyle.value = selectedVoiceStyle;
+      localStorage.setItem(
+        "alson-ai-live-style",
+        selectedVoiceStyle
+      );
+    }
+
+    liveSocket =
+      new WebSocket(
+        `${protocol}://${location.host}/api/live?style=${encodeURIComponent(selectedVoiceStyle)}`
+      );
+
+    liveSocket.onopen =
+      async () => {
+
+        liveConnected = true;
+
+        liveSetStatus(
+          "Requesting microphone..."
+        );
+
+        try{
+
+          const existingAudioTrack =
+            callStream?.getAudioTracks?.()[0] || null;
+
+          if(existingAudioTrack){
+            // Video Call already opened the microphone.
+            // Reuse that same track instead of opening a second mic.
+            liveMediaStream =
+              new MediaStream([existingAudioTrack]);
+          }else{
+            liveMediaStream =
+              await navigator.mediaDevices
+                .getUserMedia({
+                  audio: {
+                    channelCount: 1,
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                  },
+                  video: false
+                });
+          }
+
+          liveAudioContext =
+            new AudioContext();
+
+          await liveAudioContext.resume();
+
+          liveSource =
+            liveAudioContext
+              .createMediaStreamSource(
+                liveMediaStream
+              );
+
+          liveProcessor =
+            liveAudioContext
+              .createScriptProcessor(
+                4096,
+                1,
+                1
+              );
+
+          liveProcessor.onaudioprocess =
+            event => {
+
+              if(
+                !liveConnected ||
+                !liveSocket ||
+                liveSocket.readyState !==
+                  WebSocket.OPEN ||
+                !micEnabled
+              ){
+                return;
+              }
+
+              const input =
+                event.inputBuffer
+                  .getChannelData(0);
+
+              const downsampled =
+                downsampleBuffer(
+                  input,
+                  liveAudioContext.sampleRate,
+                  16000
+                );
+
+              const pcm =
+                floatTo16BitPCM(
+                  downsampled
+                );
+
+              liveSocket.send(
+                JSON.stringify({
+                  type: "audio",
+                  data:
+                    arrayBufferToBase64(pcm),
+                  mimeType:
+                    "audio/pcm;rate=16000"
+                })
+              );
+            };
+
+          liveSource.connect(
+            liveProcessor
+          );
+
+          liveProcessor.connect(
+            liveAudioContext.destination
+          );
+
+          liveInputStarted = true;
+
+          liveSetStatus(
+            "🔴 Listening..."
+          );
+
+          voiceTranscript.textContent =
+            "Speak to ALSON AI...";
+
+        }catch(error){
+
+          console.error(
+            "LIVE MIC ERROR:",
+            error
+          );
+
+          liveSetStatus(
+            "Microphone permission required"
+          );
+        }
+      };
+
+    liveSocket.onmessage =
+      event => {
+
+        try{
+
+          const message =
+            JSON.parse(event.data);
+
+          if(message.type === "audio"){
+
+            playLivePCM(
+              message.data
+            );
+
+            setAvatarSpeaking(true);
+
+            liveSetStatus(
+              "🔊 ALSON AI is speaking..."
+            );
+          }
+
+          if(
+            message.type ===
+            "input_transcript"
+          ){
+
+            voiceTranscript.textContent =
+              "You: " + message.text;
+          }
+
+          if(
+            message.type ===
+            "output_transcript"
+          ){
+
+            voiceTranscript.textContent =
+              "ALSON AI: " + message.text;
+          }
+
+          if(
+            message.type ===
+            "turn_complete"
+          ){
+
+            setAvatarSpeaking(false);
+
+            avatarReaction();
+
+            liveSetStatus(
+              "🔴 Listening..."
+            );
+          }
+
+          if(message.type === "error"){
+
+            console.error(
+              "LIVE SERVER ERROR:",
+              message.error
+            );
+
+            liveSetStatus(
+              "Voice connection error"
+            );
+          }
+
+        }catch(error){
+
+          console.error(
+            "LIVE MESSAGE ERROR:",
+            error
+          );
+
+        }
+      };
+
+    liveSocket.onerror =
+      error => {
+
+        console.error(
+          "LIVE WEBSOCKET ERROR:",
+          error
+        );
+
+        liveSetStatus(
+          "Voice connection failed"
+        );
+      };
+
+    liveSocket.onclose =
+      () => {
+
+        liveConnected = false;
+        liveInputStarted = false;
+
+        liveSetStatus(
+          "Voice connection closed"
+        );
+      };
+
+  }catch(error){
+
+    console.error(
+      "LIVE START ERROR:",
+      error
+    );
+
+    liveSetStatus(
+      "Unable to start voice"
+    );
+  }
+}
+
+function stopLiveVoice(){
+
+  liveConnected = false;
+  liveInputStarted = false;
+
+  if(liveProcessor){
+
+    try{
+      liveProcessor.disconnect();
+    }catch{}
+
+    liveProcessor = null;
+  }
+
+  if(liveSource){
+
+    try{
+      liveSource.disconnect();
+    }catch{}
+
+    liveSource = null;
+  }
+
+  if(liveMediaStream){
+
+    liveMediaStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+    liveMediaStream = null;
+  }
+
+  if(liveAudioContext){
+
+    try{
+      liveAudioContext.close();
+    }catch{}
+
+    liveAudioContext = null;
+  }
+
+  if(liveSocket){
+
+    try{
+      liveSocket.close();
+    }catch{}
+
+    liveSocket = null;
+  }
+
+  liveSetStatus("Ready");
+}
+
+if(voiceStyle){
+  voiceStyle.addEventListener("change", () => {
+
+    localStorage.setItem(
+      "alson-ai-live-style",
+      voiceStyle.value
+    );
+
+    /*
+     * Style is applied when the next Live session starts.
+     * Restart the current session so the new personality
+     * takes effect immediately.
+     */
+    if(liveConnected){
+      stopLiveVoice();
+      setTimeout(() => {
+        startLiveVoice();
+      }, 250);
+    }
+  });
+
+  const savedStyle =
+    localStorage.getItem("alson-ai-live-style");
+
+  if(savedStyle){
+    voiceStyle.value = savedStyle;
+  }
+}
+
+function startVoiceRecognition(){
+  startLiveVoice();
+}
+
+function pauseVoiceRecognition(){
+  stopLiveVoice();
+}
+
+function stopSpeaking(){
+
+  for(const source of liveAudioSources){
+    try{
+      source.stop(0);
+    }catch{}
+  }
+
+  liveAudioSources.clear();
+
+  if(livePlaybackContext){
+    livePlaybackTime =
+      livePlaybackContext.currentTime;
+  }
+
+  if(
+    liveSocket &&
+    liveSocket.readyState === WebSocket.OPEN
+  ){
+    try{
+      liveSocket.send(
+        JSON.stringify({
+          type: "interrupt"
+        })
+      );
+    }catch{}
+  }
+
+  liveSetStatus(
+    liveConnected
+      ? "🔴 Listening..."
+      : "Ready"
+  );
+}
+
+function speakAIResponse(text){
+  // Gemini Live supplies native audio.
+  if(voiceMode && liveConnected){
+    return;
+  }
+}
+
+
+
+/*
+ * Close the entire voice/video session.
+ */
+function closeCallWindow(){
+
+  voiceMode = false;
+  isSpeaking = false;
+
+  stopSpeaking();
+  stopLiveVoice();
+  stopAvatarExpressions();
+  stopCuteAvatarDance();
+
+  if(callStream){
+
+    callStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+    callStream = null;
+  }
+
+  localVideo.srcObject = null;
+
+  callOverlay.classList.remove("open");
+
+  callStatus.textContent =
+    "Ready";
+
+  voiceTranscript.textContent =
+    "Tap the microphone and speak to ALSON AI.";
+
+  micEnabled = true;
+  cameraEnabled = true;
+
+  micToggle.textContent = "🎙️";
+  cameraToggle.textContent = "📷";
+}
+
+
+voiceBtn.addEventListener(
+  "click",
+  () => openCall("voice")
+);
+
+videoBtn.addEventListener(
+  "click",
+  () => openCall("video")
+);
+
+closeCall.addEventListener(
+  "click",
+  closeCallWindow
+);
+
+endCall.addEventListener(
+  "click",
+  closeCallWindow
+);
+
+
+micToggle.addEventListener(
+  "click",
+  () => {
+
+    micEnabled = !micEnabled;
+
+    if(liveMediaStream){
+
+      liveMediaStream
+        .getAudioTracks()
+        .forEach(track => {
+          track.enabled = micEnabled;
+        });
+    }
+
+    micToggle.textContent =
+      micEnabled
+        ? "🎙️"
+        : "🔇";
+
+    if(micEnabled){
+
+      liveSetStatus(
+        liveConnected
+          ? "🔴 Listening..."
+          : "Ready"
+      );
+
+    }else{
+
+      liveSetStatus(
+        "🔇 Microphone muted"
+      );
+
+      stopSpeaking();
+    }
+  }
+);
+
+
+cameraToggle.addEventListener(
+  "click",
+  () => {
+
+    if(!callStream) return;
+
+    const track =
+      callStream.getVideoTracks()[0];
+
+    if(!track) return;
+
+    cameraEnabled =
+      !cameraEnabled;
+
+    track.enabled =
+      cameraEnabled;
+
+    cameraToggle.textContent =
+      cameraEnabled
+        ? "📷"
+        : "🚫";
+  }
+);
+
+
+/*
+ * Stop speech when the page is hidden.
+ * The voice session can be restarted when the
+ * browser allows it again.
+ */
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if(document.hidden){
+
+      stopSpeaking();
+      pauseVoiceRecognition();
+
+    }else if(
+      callOverlay.classList.contains("open") &&
+      voiceMode &&
+      micEnabled
+    ){
+
+      startVoiceRecognition();
+    }
+  }
+);
+</script>
+
+</body>
+</html>

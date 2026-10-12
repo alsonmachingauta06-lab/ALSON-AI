@@ -1,0 +1,87 @@
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.secret
+
+# Dependencies and runtime output
+node_modules/
+npm-debug.log*
+*.log
+coverage/
+
+# WhatsApp credentials and sessions
+auth/
+auth_info_baileys/
+data/whatsapp-sessions/
+data/multibot-sessions/
+sessions/
+session/
+creds.json
+session.json
+*.session
+
+# Nested bot repositories are pushed separately
+bots/
+
+# Backups and temporary files
+backups/
+branding-backup/
+*.bak
+*.bak-*
+*.before-*
+*.tmp
+*.temp
+
+# Local development files
+.DS_Store
+Thumbs.db
+
+# Local test artifacts and runtime data
+.tmp-check/
+data/
+!data/.gitkeep
+
+# All backup and diagnostic copies
+*.backup*
+*.diag-backup
+*.pre-*
+*.BEFORE-*
+*.WORKING-*
+*.tickfix*
+*.voice-backup*
+*.badge-backup*
+*.sender-badge-backup*
+*.account-badge-backup*
+*.readable.tmp
+
+# Do not publish test media or rendered test pages
+public/render-test.html
+
+# Local tests and runtime data
+.tmp-check/
+data/
+!data/.gitkeep
+
+# Backup copies
+*.backup*
+*.diag-backup
+*.pre-*
+*.before-*
+*.BEFORE-*
+*.WORKING-*
+*.tickfix*
+*.voice-backup*
+*.badge-backup*
+*.sender-badge-backup*
+*.account-badge-backup*
+*.readable.tmp
+
+# Rendered test page
+public/render-test.html
+
+# Additional local UI backups
+public/index.html.badges-backup-*
+public/index.html.voice-v2-backup

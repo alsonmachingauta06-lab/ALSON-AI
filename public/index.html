@@ -1,0 +1,5210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#08090d">
+<title>ALSON AI</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#08090d;
+  --panel:#101219;
+  --panel2:#151720;
+  --border:rgba(255,255,255,.08);
+  --text:#f5f7fb;
+  --muted:#8d93a1;
+  --accent:#25d366;
+  --accent2:#128c7e;
+  --verified:#1687ff;
+}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+body{overflow:hidden}
+
+.app{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(37,211,102,.10),transparent 35%),
+    var(--bg);
+}
+
+/* HEADER */
+.header{
+  height:64px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  background:rgba(8,9,13,.94);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:15px;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  box-shadow:0 8px 30px rgba(37,211,102,.22);
+}
+
+.brandText strong{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:15px;
+  letter-spacing:.2px;
+}
+
+.verifiedBadge{
+  width:19px;
+  height:19px;
+  display:inline-block;
+  margin-left:5px;
+  vertical-align:-4px;
+  flex:none;
+  overflow:visible;
+  filter:drop-shadow(0 1px 1.5px rgba(24,119,242,.28));
+}
+
+.verifiedBadge::after{
+  content:"✓";
+  transform:translateY(-.5px);
+}
+
+.message-content{
+  min-width:0;
+  max-width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+.sender-name{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin:0 0 4px 2px;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.2;
+}
+.aiSenderBadge{
+  width:15px;
+  height:15px;
+  margin:0;
+  vertical-align:middle;
+  filter:drop-shadow(0 1px 1px rgba(24,119,242,.2));
+}
+
+.aiStatus{
+  color:#25d366;
+  font-size:11px;
+  font-weight:600;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:#8d93a1;
+  font-size:11px;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 10px #22c55e;
+}
+
+.iconBtn{
+  width:40px;
+  height:40px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.035);
+  color:white;
+  border-radius:12px;
+  font-size:18px;
+}
+
+/* CHAT */
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 16px 150px;
+  scroll-behavior:smooth;
+}
+
+.welcome{
+  min-height:70%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px 12px;
+  animation:fadeUp .5s ease;
+}
+
+.welcomeLogo{
+  width:72px;
+  height:72px;
+  border-radius:24px;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  font-weight:900;
+  background:linear-gradient(135deg,#8b5cf6,#4f46e5);
+  box-shadow:0 15px 55px rgba(99,102,241,.32);
+  margin-bottom:22px;
+}
+
+.welcome h1{
+  margin:0;
+  font-size:30px;
+  letter-spacing:-1px;
+}
+
+.welcome p{
+  max-width:420px;
+  color:var(--muted);
+  line-height:1.6;
+  margin:10px 0 25px;
+}
+
+.quick{
+  width:100%;
+  max-width:500px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.quick button{
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  color:var(--text);
+  background:rgba(255,255,255,.035);
+  text-align:left;
+  font-size:13px;
+  transition:.2s;
+}
+
+.quick button:hover{
+  transform:translateY(-2px);
+  background:rgba(139,92,246,.1);
+  border-color:rgba(139,92,246,.35);
+}
+
+/* MESSAGES */
+.message{
+  max-width:760px;
+  margin:0 auto 8px;
+  display:flex;
+  gap:8px;
+  animation:fadeUp .2s ease;
+}
+
+.message.user{justify-content:flex-end}
+
+.avatar{
+  width:32px;
+  height:32px;
+  flex:none;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:800;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  color:#fff;
+  box-shadow:0 3px 12px rgba(37,211,102,.18);
+}
+
+.user .avatar{display:none}
+
+.bubble{
+  position:relative;
+  max-width:min(85%,650px);
+  padding:9px 12px;
+  border-radius:9px;
+  line-height:1.5;
+  font-size:14px;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  box-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+
+.ai .bubble{
+  background:#202c33;
+  border:0;
+  border-top-left-radius:3px;
+  color:#e9edef;
+}
+
+.user .bubble{
+  background:#005c4b;
+  border:0;
+  border-top-right-radius:3px;
+  color:#e9edef;
+}
+
+.ai .bubble::before{
+  content:"ALSON AI";
+  display:inline-block;
+  color:#4da3ff;
+  font-size:10px;
+  font-weight:700;
+  margin-right:4px;
+  margin-bottom:4px;
+  letter-spacing:.1px;
+}
+
+.ai .bubble::after{
+  content:"✓";
+  display:inline-grid;
+  place-items:center;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#1DA1F2;
+  color:#fff;
+  font-size:8px;
+  font-weight:900;
+  vertical-align:1px;
+}
+
+.user .bubble::after{
+  content:"";
+  display:block;
+  clear:both;
+}
+
+/* COMPOSER */
+.composerWrap{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:8px 12px calc(9px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,rgba(8,9,13,.96) 28%);
+}
+
+.composer{
+  max-width:760px;
+  margin:auto;
+  display:flex;
+  align-items:flex-end;
+  gap:7px;
+  padding:6px 7px 6px 12px;
+  background:#202c33;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:24px;
+  box-shadow:0 5px 30px rgba(0,0,0,.35);
+}
+
+textarea{
+  flex:1;
+  resize:none;
+  max-height:130px;
+  min-height:42px;
+  padding:10px 5px;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#e9edef;
+  font:inherit;
+  line-height:20px;
+}
+
+textarea::placeholder{
+  color:#8696a0;
+}
+
+.send{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  color:white;
+  background:#00a884;
+  font-size:18px;
+  box-shadow:0 3px 12px rgba(0,168,132,.25);
+}
+
+.send:disabled{
+  opacity:.35;
+}
+
+.tools{
+  max-width:760px;
+  margin:7px auto 0;
+  display:flex;
+  justify-content:center;
+  gap:7px;
+}
+
+.mode{
+  padding:6px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(32,44,51,.8);
+  color:#aebac1;
+  font-size:11px;
+}
+
+/* TYPING */
+.typing{
+  display:flex;
+  gap:4px;
+  padding:4px 2px;
+}
+
+.typing i{
+  width:6px;
+  height:6px;
+  background:#25d366;
+  border-radius:50%;
+  animation:bounce 1s infinite;
+}
+
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+
+/* NAV */
+.nav{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  padding:7px 0 0;
+}
+
+.nav button{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.025);
+  color:var(--muted);
+  border-radius:11px;
+  padding:7px 11px;
+  font-size:11px;
+}
+
+.nav button.active{
+  color:white;
+  border-color:rgba(139,92,246,.35);
+  background:rgba(139,92,246,.12);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes bounce{
+  0%,80%,100%{transform:translateY(0)}
+  40%{transform:translateY(-5px)}
+}
+
+@media(min-width:700px){
+  .header{padding:0 24px}
+  .chat{padding-left:24px;padding-right:24px}
+  .welcome h1{font-size:36px}
+}
+
+/* THEMES */
+body[data-theme="whatsapp"]{
+  --bg:#0b141a;
+  --panel:#202c33;
+  --panel2:#111b21;
+  --border:rgba(255,255,255,.08);
+  --text:#e9edef;
+  --muted:#8696a0;
+  --accent:#00a884;
+  --accent2:#25d366;
+}
+
+body[data-theme="ocean"]{
+  --bg:#07131f;
+  --panel:#102536;
+  --panel2:#0b1c2a;
+  --accent:#2196f3;
+  --accent2:#00bcd4;
+}
+
+body[data-theme="violet"]{
+  --bg:#100b1c;
+  --panel:#1d1430;
+  --panel2:#160f25;
+  --accent:#a855f7;
+  --accent2:#7c3aed;
+}
+
+body[data-theme="sunset"]{
+  --bg:#1b0d0a;
+  --panel:#2b1710;
+  --panel2:#21100c;
+  --accent:#f97316;
+  --accent2:#ef4444;
+}
+
+body[data-theme="light"]{
+  --bg:#f4f6f8;
+  --panel:#ffffff;
+  --panel2:#eef1f4;
+  --border:rgba(0,0,0,.08);
+  --text:#111827;
+  --muted:#667085;
+  --accent:#00a884;
+  --accent2:#128c7e;
+}
+
+.themePanel{
+  position:fixed;
+  z-index:100;
+  top:70px;
+  right:12px;
+  width:230px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:rgba(20,24,30,.97);
+  box-shadow:0 15px 50px rgba(0,0,0,.45);
+  backdrop-filter:blur(20px);
+  display:none;
+}
+
+.themePanel.open{display:block}
+
+.themeTitle{
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.themeGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.themeChoice{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border-radius:10px;
+  padding:9px 7px;
+  font-size:11px;
+  text-align:left;
+}
+
+.themeChoice.active{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+}
+
+
+
+.voiceSettings{
+  padding:12px 14px;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.voiceSettings label{
+  display:block;
+  color:#aeb8c8;
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+
+.voiceAdjust{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:10px;
+}
+
+.voiceAdjust input{
+  width:100%;
+  accent-color:#1DA1F2;
+}
+
+.callOverlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(10px);
+}
+
+.callOverlay.open{
+  display:flex;
+}
+
+.callWindow{
+  width:min(100%,760px);
+  max-height:92vh;
+  overflow:hidden;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
+}
+
+.callHeader{
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.callHeader button{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:50%;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:16px;
+}
+
+.videoStage{
+  position:relative;
+  aspect-ratio:16/10;
+  background:#050607;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+
+#localVideo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+
+.aiCallAvatar{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  overflow:hidden;
+  color:#fff;
+  background:
+    radial-gradient(ellipse at 50% 35%,#f7d9d4 0%,#b77f85 24%,transparent 54%),
+    linear-gradient(155deg,#302333,#17121f 60%,#4b2b43);
+  transition:filter .35s ease;
+}
+
+.aiCallAvatar.speaking{
+  filter:brightness(1.08);
+}
+
+.aiCallAvatar .callLogo{
+  display:none;
+}
+
+.girlAura{
+  position:absolute;
+  width:260px;
+  height:300px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,191,213,.27),transparent 68%);
+  animation:auraPulse 4s ease-in-out infinite;
+  pointer-events:none;
+}
+
+.girlPortrait{
+  position:relative;
+  width:min(64vw,290px);
+  height:min(67vw,300px);
+  min-height:220px;
+  border-radius:48% 48% 38% 38%;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 37%,#f7d9cb 0 24%,transparent 25%),
+    radial-gradient(ellipse at 50% 24%,#21151b 0 39%,transparent 40%),
+    linear-gradient(145deg,#e7b8bc,#583b55 72%);
+  box-shadow:0 15px 50px #10081288,0 0 45px #ffb9d855;
+  animation:gentlyFloat 4.5s ease-in-out infinite;
+}
+
+.girlPortrait:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:12%;
+  top:-4%;
+  width:76%;
+  height:76%;
+  border-radius:48% 48% 42% 42%;
+  background:
+    radial-gradient(ellipse at 34% 52%,#33212a 0 2.5%,transparent 3.5%),
+    radial-gradient(ellipse at 66% 52%,#33212a 0 2.5%,transparent 3.5%),
+    radial-gradient(ellipse at 35% 51%,#fff 0 1%,transparent 2%),
+    radial-gradient(ellipse at 65% 51%,#fff 0 1%,transparent 2%),
+    radial-gradient(ellipse at 50% 67%,#d88b91 0 1.2%,transparent 2%),
+    radial-gradient(ellipse at 32% 65%,#ed8d9c 0 5%,transparent 12%),
+    radial-gradient(ellipse at 68% 65%,#ed8d9c 0 5%,transparent 12%),
+    radial-gradient(ellipse at 50% 43%,#ffe5d9 0 35%,#e7b7aa 68%,#5b3039 100%);
+  box-shadow:inset 0 -18px 25px #6c394422;
+  clip-path:ellipse(48% 49% at 50% 50%);
+}
+
+.girlPortrait:after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:-12%;
+  left:4%;
+  width:92%;
+  height:70%;
+  border-radius:48% 48% 30% 30%;
+  background:
+    radial-gradient(ellipse at 50% 92%,transparent 0 31%,#21151b 32% 52%,transparent 53%),
+    linear-gradient(100deg,#171116,#49303a 30%,#1d141c 56%,#65404b 74%,#21151b);
+  pointer-events:none;
+}
+
+.girlMouth{
+  position:absolute;
+  z-index:4;
+  left:calc(50% - 11px);
+  top:57%;
+  width:22px;
+  height:7px;
+  border-radius:50%;
+  background:#a84e62;
+  transform:translateX(-50%);
+  transition:height .07s ease,border-radius .07s ease;
+}
+
+.girlPortrait.speaking .girlMouth{
+  height:var(--mouth-open,12px);
+  border-radius:40% 40% 55% 55%;
+}
+
+.girlEyeBlink{
+  position:absolute;
+  z-index:5;
+  top:43%;
+  left:24%;
+  right:24%;
+  height:3px;
+  opacity:0;
+  background:#613744;
+  border-radius:50%;
+  pointer-events:none;
+}
+
+.girlPortrait.blinking .girlEyeBlink{
+  opacity:1;
+}
+
+.girlHand{
+  position:absolute;
+  z-index:6;
+  right:7%;
+  bottom:12%;
+  width:45px;
+  height:100px;
+  border-radius:25px;
+  background:linear-gradient(90deg,#e5b4a7,#ffe0d0,#d99d98);
+  transform:rotate(-24deg) translateY(120%);
+  transform-origin:bottom center;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  box-shadow:inset -5px 0 9px #9c5e5c22;
+}
+
+.girlPortrait.shy .girlHand{
+  transform:rotate(-24deg) translateY(15%);
+}
+
+.girlCaption{
+  position:relative;
+  z-index:8;
+  font-weight:600;
+  text-shadow:0 2px 12px #000;
+}
+
+.girlCaption small{
+  display:block;
+  margin-top:5px;
+  text-align:center;
+  font-weight:400;
+  opacity:.78;
+}
+
+.girlHeart{
+  position:absolute;
+  z-index:7;
+  bottom:-30px;
+  font-size:22px;
+  pointer-events:none;
+  animation:heartRise 3.5s ease-out forwards;
+}
+
+.aiCallAvatar.blushing .girlPortrait:before{
+  filter:saturate(1.4);
+}
+
+@keyframes gentlyFloat{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-5px) rotate(.5deg)}
+}
+@keyframes auraPulse{
+  0%,100%{transform:scale(.94);opacity:.55}
+  50%{transform:scale(1.08);opacity:1}
+}
+@keyframes heartRise{
+  0%{transform:translateY(0) scale(.65);opacity:0}
+  15%{opacity:.9}
+  100%{transform:translateY(-360px) translateX(25px) scale(1.25);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .girlPortrait,.girlAura{animation:none}
+}
+
+.callControls{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  padding:16px;
+}
+
+.callControls button{
+  width:52px;
+  height:52px;
+  border:0;
+  border-radius:50%;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:20px;
+}
+
+.callControls .endCall{
+  background:#e53935;
+  transform:rotate(135deg);
+}
+
+.voiceTranscript{
+  min-height:45px;
+  margin:0 16px 16px;
+  padding:12px;
+  border-radius:12px;
+  background:var(--panel2);
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+@media(max-width:600px){
+  .callOverlay{
+    padding:0;
+  }
+
+  .callWindow{
+    width:100%;
+    height:100%;
+    max-height:none;
+    border-radius:0;
+  }
+
+  .videoStage{
+    aspect-ratio:auto;
+    height:calc(100vh - 190px);
+  }
+}
+
+
+.avatarPickerBar{
+  position:absolute;
+  z-index:30;
+  top:10px;
+  left:10px;
+}
+
+.avatarPickerBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(0,0,0,.58);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+
+.aiAvatarImageWrap{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:none;
+  overflow:hidden;
+}
+
+.aiAvatarImageWrap.active{
+  display:block;
+}
+
+#aiAvatarImage{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform-origin:center center;
+  transition:transform .25s ease, filter .25s ease;
+}
+
+.aiCallAvatar.hasRealImage{
+  background:#09070b;
+}
+
+.aiCallAvatar.hasRealImage .girlPortrait,
+.aiCallAvatar.hasRealImage .girlAura{
+  display:none;
+}
+
+.aiCallAvatar.hasRealImage .girlCaption{
+  z-index:10;
+  position:absolute;
+  bottom:18px;
+  left:0;
+  right:0;
+  text-align:center;
+}
+
+.aiCallAvatar.hasRealImage.speaking #aiAvatarImage{
+  animation:avatarTalkingFloat .7s ease-in-out infinite alternate;
+}
+
+.aiCallAvatar.hasRealImage.blinking #aiAvatarImage{
+  filter:brightness(.94);
+}
+
+.aiCallAvatar.hasRealImage.blushing #aiAvatarImage{
+  filter:saturate(1.18) brightness(1.03);
+}
+
+@keyframes avatarTalkingFloat{
+  from{transform:scale(1.005) translateY(0)}
+  to{transform:scale(1.018) translateY(-2px)}
+}
+
+@keyframes avatarCuteDance{
+  0%,100%{transform:scale(1) rotate(0) translateY(0)}
+  25%{transform:scale(1.012) rotate(-1deg) translateY(-3px)}
+  50%{transform:scale(1.018) rotate(1deg) translateY(-6px)}
+  75%{transform:scale(1.012) rotate(-.7deg) translateY(-3px)}
+}
+
+.aiCallAvatar.cuteDancing #aiAvatarImage{
+  animation:avatarCuteDance 1.8s ease-in-out infinite;
+}
+
+
+/* ===== ALSON REAL AVATAR MOTION ===== */
+
+.aiCallAvatar.hasRealImage{
+  animation:
+    avatarBreathing 4s ease-in-out infinite;
+}
+
+.aiCallAvatar.hasRealImage .aiAvatarImageWrap{
+  transform-origin: 50% 55%;
+  transition:
+    transform .45s ease,
+    filter .45s ease;
+}
+
+.aiCallAvatar.hasRealImage .girlPortrait{
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aiCallAvatar.cuteSway .aiAvatarImageWrap{
+  animation:
+    avatarSway 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteBounce .aiAvatarImageWrap{
+  animation:
+    avatarBounce 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteShy .aiAvatarImageWrap{
+  animation:
+    avatarShy 1.8s ease-in-out;
+}
+
+.aiCallAvatar.cuteDancing .aiAvatarImageWrap{
+  animation:
+    avatarDance 1.8s ease-in-out;
+}
+
+.aiCallAvatar.speaking .aiAvatarImageWrap{
+  animation:
+    avatarTalk 0.7s ease-in-out infinite;
+}
+
+@keyframes avatarBreathing{
+  0%,100%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.012);
+  }
+}
+
+@keyframes avatarSway{
+  0%,100%{
+    transform:rotate(0deg) translateX(0);
+  }
+  30%{
+    transform:rotate(-2deg) translateX(-5px);
+  }
+  70%{
+    transform:rotate(2deg) translateX(5px);
+  }
+}
+
+@keyframes avatarBounce{
+  0%,100%{
+    transform:translateY(0) scale(1);
+  }
+  35%{
+    transform:translateY(-9px) scale(1.015);
+  }
+  65%{
+    transform:translateY(2px) scale(.995);
+  }
+}
+
+@keyframes avatarShy{
+  0%,100%{
+    transform:rotate(0) translateX(0);
+  }
+  35%{
+    transform:rotate(-3deg) translateX(-7px);
+  }
+  65%{
+    transform:rotate(2deg) translateX(4px);
+  }
+}
+
+@keyframes avatarDance{
+  0%,100%{
+    transform:translateY(0) rotate(0deg);
+  }
+  20%{
+    transform:translateY(-8px) rotate(-3deg);
+  }
+  40%{
+    transform:translateY(2px) rotate(3deg);
+  }
+  60%{
+    transform:translateY(-7px) rotate(-2deg);
+  }
+  80%{
+    transform:translateY(1px) rotate(2deg);
+  }
+}
+
+@keyframes avatarTalk{
+  0%,100%{
+    transform:translateY(0) scale(1);
+  }
+  50%{
+    transform:translateY(-2px) scale(1.008);
+  }
+}
+
+
+/* ===== REAL AVATAR FACE OVERLAYS ===== */
+
+.aiAvatarImageWrap{
+  position:relative;
+  overflow:visible;
+}
+
+.realAvatarMouth{
+  position:absolute;
+  width:22px;
+  height:4px;
+  transform:
+    translate(-50%,-50%)
+    scaleY(.7);
+  border-radius:50%;
+  background:rgba(70,20,35,.72);
+  pointer-events:none;
+  z-index:8;
+  opacity:.7;
+  transition:
+    height .06s ease,
+    transform .06s ease;
+}
+
+.realAvatarMouth.open{
+  height:var(--mouth-open,14px);
+  transform:
+    translate(-50%,-50%)
+    scaleY(1);
+  border-radius:45%;
+}
+
+.realAvatarHand{
+  position:absolute;
+  right:10%;
+  bottom:18%;
+  z-index:20;
+  font-size:38px;
+  opacity:0;
+  transform:
+    translateY(20px)
+    scale(.7)
+    rotate(-15deg);
+  transition:
+    opacity .25s ease,
+    transform .45s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+
+.realAvatarHand.show{
+  opacity:1;
+  transform:
+    translateY(-8px)
+    scale(1)
+    rotate(8deg);
+  animation:
+    cuteHandWave 1.1s ease-in-out infinite;
+}
+
+@keyframes cuteHandWave{
+  0%,100%{
+    transform:
+      translateY(-8px)
+      scale(1)
+      rotate(8deg);
+  }
+
+  50%{
+    transform:
+      translateY(-12px)
+      scale(1.05)
+      rotate(-8deg);
+  }
+}
+
+
+/* Colourful ALSON WhatsApp dashboard */
+#whatsappDashboard[hidden]{display:none!important}
+#whatsappDashboard{
+  position:fixed;z-index:40;top:76px;bottom:128px;left:12px;right:12px;
+  overflow:auto;padding:16px;border:1px solid rgba(83,230,190,.3);
+  border-radius:24px;color:#f8fbff;
+  background:linear-gradient(145deg,rgba(14,22,36,.98),rgba(18,13,37,.98) 55%,rgba(5,38,38,.98));
+  box-shadow:0 24px 80px rgba(0,0,0,.65),0 0 35px rgba(34,211,170,.10);
+  backdrop-filter:blur(24px)
+}
+.waDashTop{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.waDashBrand{display:flex;align-items:center;gap:11px}
+.waDashLogo{
+  width:48px;height:48px;display:grid;place-items:center;border-radius:16px;
+  font-size:25px;background:linear-gradient(135deg,#25d366,#00c9ff 55%,#a855f7);
+  box-shadow:0 7px 28px #25d36630
+}
+.waDashTitle{font-size:19px;font-weight:850;letter-spacing:-.4px}
+.waDashSub{font-size:12px;color:#a8b4c9;margin-top:4px}
+.waDashClose,.waDashBtn{
+  border:1px solid #ffffff20;color:#fff;border-radius:13px;padding:11px 14px;
+  background:#ffffff0d;font-weight:750;cursor:pointer
+}
+.waDashClose{font-size:17px}
+.waDashHero{
+  margin:18px 0;padding:18px;border-radius:20px;
+  background:linear-gradient(115deg,#102f2c,#17254c 60%,#38204c);
+  border:1px solid #ffffff16
+}
+.waDashHero h2{font-size:22px;margin:0 0 7px}
+.waDashHero p{font-size:13px;line-height:1.5;color:#c2cce0;margin:0}
+.waDashGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.waDashCard{
+  min-width:0;padding:15px;border-radius:18px;background:#ffffff08;
+  border:1px solid #ffffff16
+}
+.waDashCard h3{font-size:14px;margin:0 0 12px}
+.waDashField{display:block;font-size:12px;color:#c4cee0;margin:12px 0 6px}
+.waDashInput{
+  width:100%;min-width:0;padding:13px;border-radius:12px;
+  color:#fff;background:#090f1d;border:1px solid #ffffff22;outline:none
+}
+.waDashInput:focus{border-color:#2de0ad;box-shadow:0 0 0 3px #2de0ad18}
+.waDashBtn{background:linear-gradient(100deg,#12b981,#0ea5e9);border:0}
+.waDashBtn.purple{background:linear-gradient(100deg,#7c3aed,#c026d3)}
+.waDashBtn.danger{background:linear-gradient(100deg,#dc3454,#f97316)}
+.waDashBtn:disabled{opacity:.5;cursor:wait}
+.waDashFull{width:100%;margin-top:10px}
+.waDashCode{
+  display:none;margin-top:13px;padding:16px;border-radius:16px;text-align:center;
+  background:linear-gradient(120deg,#062e2a,#132e51,#321b4c);
+  border:1px solid #3ce4b288
+}
+.waDashCode strong{display:block;font-size:27px;letter-spacing:4px;color:#73f5d0;margin:8px 0;overflow-wrap:anywhere}
+.waDashNote{font-size:12px;line-height:1.5;color:#aebbd0}
+.waDashStatus{font-size:12px;line-height:1.5;color:#aebbd0;margin-top:12px;overflow-wrap:anywhere}
+.waDashSession{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #ffffff12}
+.waDashSession:last-child{border-bottom:0}
+.waDashPhone{font-weight:750;font-size:13px;overflow-wrap:anywhere}
+.waDashPill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:800;margin-top:6px;background:#ffffff12;color:#cbd5e1}
+.waDashPill.connected{background:#0d9f6e2b;color:#6ef0bd}
+.waDashPill.error{background:#e3485828;color:#ff9ba7}
+.waDashEmpty{font-size:12px;color:#aebbd0;padding:10px 0}
+@media(max-width:560px){
+  #whatsappDashboard{top:72px;bottom:125px;left:7px;right:7px;padding:12px;border-radius:20px}
+  .waDashGrid{grid-template-columns:1fr}
+  .waDashTitle{font-size:17px}
+  .waDashHero{padding:15px}
+}
+
+
+
+/* ALSON account panel */
+/* Hide verification icons inside replies, but keep the AI-name badge. */
+.message .bubble .verifiedBadge,
+.message .bubble .aiSenderBadge { display: none !important; }
+#signedInPanel #ownerBadge { display: inline-block; width: 19px; height: 19px; margin-left: 5px; vertical-align: -4px; }
+#signedInPanel #ownerBadge[hidden] { display: none !important; }
+
+.verifiedBadge[hidden], #ownerKeyWrap[hidden], #signedInPanel[hidden],
+#signedInBadgeLabel[hidden] { display:none !important; }
+.accountPanel {
+  margin: 12px auto; padding: 16px; width: min(100% - 24px, 680px);
+  border: 1px solid var(--border, #7775); border-radius: 16px;
+  background: var(--panel, var(--card, transparent)); box-sizing: border-box;
+}
+.accountPanel h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.accountPanel h3 { font-size: 1rem; }
+.accountPanel label { display:block; margin: 10px 0 5px; }
+.accountPanel input {
+  box-sizing:border-box; width:100%; padding:11px; border-radius:10px;
+  border:1px solid var(--border, #8888); background:var(--input-bg, transparent);
+  color:inherit;
+}
+.accountPanel button { margin:8px 6px 4px 0; padding:10px 14px; border-radius:10px; cursor:pointer; }
+.accountActions { display:flex; flex-wrap:wrap; gap:6px; }
+#profileResult { margin-top:12px; overflow-wrap:anywhere; }
+
+/* ALSON AI: hide only the tick at the end of AI chat bubbles */
+.message.ai .bubble::after,
+.ai .bubble::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+</style>
+
+<script type="module">
+  import {
+    FaceLandmarker,
+    FilesetResolver
+  } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
+
+  window.ALSONFaceAI = {
+    landmarker: null,
+    ready: false,
+
+    async init(){
+      if(this.ready) return;
+
+      try{
+        const vision =
+          await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
+          );
+
+        this.landmarker =
+          await FaceLandmarker.createFromOptions(
+            vision,
+            {
+              baseOptions: {
+                modelAssetPath:
+                  "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+                delegate: "GPU"
+              },
+
+              runningMode: "IMAGE",
+
+              numFaces: 1,
+
+              outputFaceBlendshapes: true,
+
+              outputFacialTransformationMatrixes: true
+            }
+          );
+
+        this.ready = true;
+
+        console.log("🧠 ALSON Face AI ready");
+
+      }catch(error){
+
+        console.error(
+          "ALSON FACE AI ERROR:",
+          error
+        );
+
+      }
+    },
+
+    async analyze(image){
+
+      await this.init();
+
+      if(!this.landmarker){
+        throw new Error(
+          "Face Landmarker could not initialize"
+        );
+      }
+
+      const result =
+        this.landmarker.detect(image);
+
+      const face =
+        result?.faceLandmarks?.[0] || null;
+
+      const blend =
+        result?.faceBlendshapes?.[0]
+          ?.categories || [];
+
+      if(!face){
+        return {
+          detected: false,
+          landmarks: [],
+          blendshapes: []
+        };
+      }
+
+      const getBlend = name => {
+        const item =
+          blend.find(x => x.categoryName === name);
+
+        return item
+          ? item.score
+          : 0;
+      };
+
+      const profile = {
+
+        detected: true,
+
+        landmarks: face,
+
+        blendshapes: blend,
+
+        expressions: {
+
+          blinkLeft:
+            getBlend("eyeBlinkLeft"),
+
+          blinkRight:
+            getBlend("eyeBlinkRight"),
+
+          smileLeft:
+            getBlend("mouthSmileLeft"),
+
+          smileRight:
+            getBlend("mouthSmileRight"),
+
+          jawOpen:
+            getBlend("jawOpen"),
+
+          mouthPucker:
+            getBlend("mouthPucker"),
+
+          browUp:
+            getBlend("browInnerUp"),
+
+          cheekSquint:
+            getBlend("cheekSquintLeft")
+        },
+
+        timestamp: Date.now()
+      };
+
+      console.log(
+        "🧠 ALSON face detected",
+        profile.expressions
+      );
+
+      return profile;
+    }
+  };
+
+  window.ALSONFaceAI.init();
+</script>
+
+
+<style id="alsonCharactersStyles">
+#alsonCharactersView{padding:18px 16px 28px;max-width:1100px;margin:0 auto;color:var(--text,#f5f3ff);width:100%;box-sizing:border-box}
+#alsonCharactersView[hidden]{display:none!important}
+.ac-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ac-title{font-size:25px;font-weight:800;margin:0}
+.ac-subtitle{opacity:.75;font-size:13px;margin:6px 0 0}
+.ac-btn{border:1px solid #8b5cf6;background:rgba(139,92,246,.15);color:inherit;padding:10px 13px;border-radius:12px;cursor:pointer;font:inherit}
+.ac-btn.primary{background:linear-gradient(135deg,#8b5cf6,#ec4899);border:0;color:white;font-weight:700}
+.ac-btn:disabled{opacity:.5;cursor:wait}
+.ac-filters{display:flex;gap:8px;overflow-x:auto;padding:3px 0 14px}
+.ac-filter{white-space:nowrap;border:1px solid #ffffff25;background:transparent;color:inherit;border-radius:99px;padding:8px 12px;cursor:pointer}
+.ac-filter.active{background:#8b5cf6;color:white;border-color:#8b5cf6}
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.ac-card{min-width:0;text-align:left;padding:0;border:1px solid #ffffff1b;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.045);color:inherit;cursor:pointer}
+.ac-card:hover{border-color:#a78bfa;transform:translateY(-1px)}
+.ac-art{height:125px;display:flex;align-items:center;justify-content:center;font-size:54px;background:radial-gradient(circle at 30% 20%,#ec489944,transparent 55%),linear-gradient(135deg,#312e81,#581c87,#831843)}
+.ac-art{position:relative;overflow:hidden;background:linear-gradient(135deg,#312e81,#581c87,#831843)}
+.ac-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:transform .25s}
+.ac-card:hover .ac-art img{transform:scale(1.04)}
+.ac-art-fallback{position:relative;z-index:1;font-size:48px;text-shadow:0 2px 15px #000}
+.ac-art img:not([src=""]){background:linear-gradient(135deg,#312e81,#831843)}
+.ac-chat-avatar{position:relative;overflow:hidden}
+.ac-chat-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.ac-chat-avatar span{position:absolute;inset:0;display:grid;place-items:center}
+.ac-chat-log{background-color:#111827;background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:local}
+.ac-chat-log .ac-bubble.model{background:rgba(20,25,40,.86);backdrop-filter:blur(8px)}
+.ac-chat-log .ac-bubble.user{box-shadow:0 3px 15px #0003}
+
+.ac-card-body{padding:12px}
+.ac-name{font-weight:750;font-size:15px;margin-bottom:5px}
+.ac-category{font-size:11px;color:#c4b5fd;margin-bottom:7px}
+.ac-desc{font-size:12px;line-height:1.45;opacity:.8;overflow-wrap:anywhere}
+.ac-empty{padding:24px;text-align:center;opacity:.75}
+.ac-form{margin-top:22px;padding:16px;border:1px solid #8b5cf655;border-radius:18px;background:rgba(139,92,246,.06)}
+.ac-form h3{margin:0 0 12px}
+.ac-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ac-field{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.ac-field input,.ac-field select,.ac-field textarea,.ac-chat-input{width:100%;box-sizing:border-box;border:1px solid #ffffff25;border-radius:11px;padding:11px;background:rgba(20,16,38,.85);color:inherit;font:inherit}
+.ac-field textarea{min-height:78px;resize:vertical}
+.ac-wide{grid-column:1/-1}
+.ac-note{font-size:12px;opacity:.7;line-height:1.5}
+.ac-status{font-size:13px;min-height:20px;margin:10px 0;overflow-wrap:anywhere}
+.ac-chat{border:1px solid #ffffff20;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.025)}
+.ac-chat-head{display:flex;align-items:center;gap:12px;padding:13px;border-bottom:1px solid #ffffff19}
+.ac-chat-avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:28px;background:linear-gradient(135deg,#312e81,#831843);flex-shrink:0}
+.ac-chat-title{font-weight:800}
+.ac-chat-log{height:min(52vh,500px);min-height:260px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ac-bubble{max-width:86%;padding:11px 13px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px}
+.ac-bubble.user{align-self:flex-end;background:linear-gradient(135deg,#7c3aed,#a21caf);color:white;border-bottom-right-radius:5px}
+.ac-bubble.model{align-self:flex-start;background:rgba(255,255,255,.09);border-bottom-left-radius:5px}
+.ac-chat-compose{display:flex;gap:8px;padding:12px;border-top:1px solid #ffffff19}
+.ac-chat-input{resize:none;min-height:44px;max-height:120px;flex:1}
+.ac-hide{display:none!important}
+@media(max-width:520px){#alsonCharactersView{padding:12px 10px 22px}.ac-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ac-art{height:105px}.ac-form-grid{grid-template-columns:1fr}.ac-wide{grid-column:auto}.ac-title{font-size:22px}.ac-chat-log{height:48vh;min-height:230px}}
+</style>
+</head>
+
+
+<div id="jsCrash" style="display:none;position:fixed;z-index:999999;left:10px;right:10px;top:10px;background:#ff1744;color:white;padding:14px;border-radius:12px;font:14px monospace;white-space:pre-wrap;"></div>
+
+<script>
+(function(){
+  function showError(type, value){
+    const box = document.getElementById("jsCrash");
+    if(!box) return;
+    box.style.display = "block";
+    box.textContent =
+      "⚠️ ALSON AI JAVASCRIPT ERROR\n\n" +
+      type + ":\n" +
+      String(value);
+  }
+
+  window.addEventListener("error", function(e){
+    showError(
+      "ERROR",
+      e.message + "\n\n" +
+      "File: " + e.filename +
+      "\nLine: " + e.lineno +
+      "\nColumn: " + e.colno
+    );
+  });
+
+  window.addEventListener("unhandledrejection", function(e){
+    showError(
+      "PROMISE ERROR",
+      e.reason?.stack || e.reason
+    );
+  });
+})();
+</script>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+  <div class="brand">
+    <div class="logo">A</div>
+    <div class="brandText">
+      <strong>
+        ALSON AI
+
+      </strong>
+      <div class="status">
+        <span class="dot"></span>
+        <span id="status" class="aiStatus">AI Assistant</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="iconBtn" id="menuBtn" aria-label="Themes">☰</button>
+</header>
+<section id="accountPanel" class="accountPanel" aria-label="ALSON AI account">
+  <h2>ALSON AI Account</h2>
+  <p id="accountMessage" role="status">Log in or create an account to continue.</p>
+  <form id="accountForm">
+    <label for="accountUsername">Username</label>
+    <input id="accountUsername" autocomplete="username" minlength="3" maxlength="24"
+      pattern="[A-Za-z0-9_]+" required placeholder="Choose a username">
+    <label for="accountPassword">Password</label>
+    <input id="accountPassword" type="password" autocomplete="current-password"
+      minlength="10" maxlength="200" required placeholder="At least 10 characters">
+    <div id="ownerKeyWrap" hidden>
+      <label for="ownerSetupKey">Owner setup key</label>
+      <input id="ownerSetupKey" type="password" autocomplete="off"
+        placeholder="Only needed to create the owner account">
+    </div>
+    <div class="accountActions">
+      <button type="submit" id="accountSubmit">Log in</button>
+      <button type="button" id="accountMode">Create account</button>
+    </div>
+  </form>
+  <div id="signedInPanel" hidden>
+    <p>Signed in as <strong id="signedInName"></strong>
+      <svg id="ownerBadge" class="verifiedBadge"
+     aria-label="Custom ALSON AI owner badge"
+     title="Custom ALSON AI owner badge"
+     viewBox="0 0 24 24" width="17" height="17" role="img" hidden>
+  <path d="M12 1.5l2.6 1.3 2.9-.1 1.1 2.7 2.5 1.4-.4 2.9 1.3 2.3-1.3 2.6.4 2.8-2.5 1.4-1.1 2.7-2.9-.1L12 22.5l-2.6-1.3-2.9.1-1.1-2.7-2.5-1.4.4-2.8L2 12.1l1.3-2.3-.4-2.9 2.5-1.4 1.1-2.7 2.9.1z" fill="#1877F2"/>
+  <path d="m7.5 12.2 2.9 2.9 6.2-6.2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+      <span id="signedInBadgeLabel" hidden> · ALSON AI owner</span>
+    </p>
+    <button type="button" id="logoutBtn">Log out</button>
+  </div>
+  <hr>
+  <h3>Find a profile</h3>
+  <form id="profileForm">
+    <label for="profileUsername">Username</label>
+    <input id="profileUsername" maxlength="24" required placeholder="Search username">
+    <button type="submit">View profile</button>
+  </form>
+  <div id="profileResult" aria-live="polite"></div>
+</section>
+
+
+<div class="themePanel" id="themePanel">
+  <div class="themeTitle">🎨 ALSON AI Theme</div>
+
+  <div class="themeGrid">
+    <button class="themeChoice" data-theme="midnight">🌑 Midnight</button>
+    <button class="themeChoice" data-theme="whatsapp">🟢 WhatsApp</button>
+    <button class="themeChoice" data-theme="ocean">🔵 Ocean</button>
+    <button class="themeChoice" data-theme="violet">🟣 Violet</button>
+    <button class="themeChoice" data-theme="sunset">🌅 Sunset</button>
+    <button class="themeChoice" data-theme="light">☀️ Light</button>
+  </div>
+</div>
+
+
+
+<section id="alsonCharactersView" hidden aria-label="AI Characters">
+  <div id="acDiscover">
+    <header class="ac-head">
+      <div>
+        <h2 class="ac-title">💜 Discover Characters</h2>
+        <p class="ac-subtitle">Meet original personalities, create your own, and start a story.</p>
+      </div>
+      <button type="button" class="ac-btn primary" id="acCreateToggle">＋ Create character</button>
+    </header>
+    <nav class="ac-filters" id="acFilters" aria-label="Filter characters"></nav>
+    <div class="ac-status" id="acListStatus" role="status">Loading characters…</div>
+    <div class="ac-grid" id="acGrid"></div>
+
+    <form id="acCreateForm" class="ac-form ac-hide">
+      <h3>✨ Create your character</h3>
+      <p class="ac-note">Your custom characters are private to your account for now.</p>
+      <div class="ac-form-grid">
+        <label class="ac-field">Character name
+          <input name="name" required minlength="2" maxlength="40" placeholder="e.g. Luna">
+        </label>
+        <label class="ac-field">Category
+          <select name="category">
+            <option>AI Girlfriend</option><option>AI Boyfriend</option>
+            <option>Anime</option><option>Companion</option>
+            <option>Roleplay</option><option>Original</option>
+          </select>
+        </label>
+        <label class="ac-field">Emoji avatar
+          <input name="emoji" maxlength="8" value="💜" placeholder="💜">
+        </label>
+        <label class="ac-field">Short introduction
+          <input name="description" required minlength="5" maxlength="500" placeholder="What makes this character special?">
+        </label>
+        <label class="ac-field ac-wide">Personality and roleplay style
+          <textarea name="personality" required minlength="10" maxlength="3000" placeholder="Describe how the character speaks, behaves, and responds…"></textarea>
+        </label>
+      </div>
+      <div class="ac-status" id="acCreateStatus" role="status"></div>
+      <button class="ac-btn primary" id="acCreateSubmit" type="submit">Create character</button>
+      <button class="ac-btn" id="acCreateCancel" type="button">Cancel</button>
+    </form>
+  </div>
+
+  <section id="acConversation" class="ac-hide">
+    <div class="ac-chat">
+      <header class="ac-chat-head">
+        <button type="button" class="ac-btn" id="acBack">← Back</button>
+        <div class="ac-chat-avatar" id="acChatAvatar">💜</div>
+        <div style="min-width:0">
+          <div class="ac-chat-title" id="acChatName">Character</div>
+          <div class="ac-note" id="acChatDescription"></div>
+        </div>
+      </header>
+      <div class="ac-chat-log" id="acChatLog" aria-live="polite"></div>
+      <form class="ac-chat-compose" id="acChatForm">
+        <textarea class="ac-chat-input" id="acChatInput" rows="1" maxlength="12000" required placeholder="Message your character…"></textarea>
+        <button class="ac-btn primary" id="acChatSend" type="submit">Send ↑</button>
+      </form>
+    </div>
+    <div class="ac-status" id="acChatStatus" role="status"></div>
+  </section>
+</section>
+<main class="chat" id="chat">
+
+  <section class="welcome" id="welcome">
+    <div class="welcomeLogo">A</div>
+
+    <h1>What's on your mind?</h1>
+
+    <p>
+      I'm ALSON AI — your assistant for coding, ideas,
+      conversations, creativity and more.
+    </p>
+
+    <div class="quick">
+      <button onclick="quick('Help me write a Node.js project')">
+        💻 Coding help
+      </button>
+
+      <button onclick="quick('Give me some ideas for a project')">
+        💡 Project ideas
+      </button>
+
+      <button onclick="quick('Explain something to me simply')">
+        🧠 Explain something
+      </button>
+
+      <button onclick="quick('Let’s have a conversation')">
+        💬 Chat with me
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<section id="whatsappDashboard" hidden aria-label="WhatsApp dashboard">
+  <div class="waDashTop">
+    <div class="waDashBrand">
+      <div class="waDashLogo">✦</div>
+      <div>
+        <div class="waDashTitle">ALSON <span style="color:#54e9c1">CONNECT</span></div>
+        <div class="waDashSub">WhatsApp control centre · Admin access</div>
+      </div>
+    </div>
+    <button class="waDashClose" id="waDashClose" aria-label="Close dashboard">✕</button>
+  </div>
+
+  <div class="waDashHero">
+    <h2>One hub. Your sessions. ✨</h2>
+    <p>Request a WhatsApp linking code, monitor this server's sessions and disconnect a session when needed.</p>
+  </div>
+
+  <div class="waDashCard" id="multiBotCard" style="margin:0 0 12px">
+    <h3>🤖 Pair one of your WhatsApp bots</h3>
+    <p class="waDashNote">Choose one bot for this pairing request. The other bots will not be started by this request.</p>
+    <label class="waDashField" for="multiBotSelect">Bot</label>
+    <select class="waDashInput" id="multiBotSelect">
+      <option value="alson">Alson · ALSON-TOXIC</option>
+      <option value="alson-xmd">Alson XMD</option>
+      <option value="alson-bot">Alson bot</option>
+    </select>
+    <label class="waDashField" for="multiBotPhone">WhatsApp number · international digits only</label>
+    <input class="waDashInput" id="multiBotPhone" inputmode="numeric" autocomplete="tel" placeholder="2637XXXXXXXX">
+    <button class="waDashBtn purple waDashFull" id="multiBotPair">Generate selected bot's pairing code</button>
+    <div class="waDashStatus" id="multiBotStatus" role="status">Sign in to ALSON-AI before requesting a pairing code.</div>
+    <div class="waDashCode" id="multiBotCodeBox" style="display:none" aria-live="polite">
+      <div class="waDashNote">PAIRING CODE</div>
+      <strong id="multiBotCode"></strong>
+      <button class="waDashBtn waDashFull" id="multiBotCopy">Copy code</button>
+      <div class="waDashNote">Enter this code in WhatsApp → Linked devices. Never share the code.</div>
+    </div>
+  </div>
+
+  <div class="waDashCard" id="multiBotProcessesCard" style="margin:0 0 12px">
+    <h3>📡 My Mini Bots</h3>
+    <p class="waDashNote">View and stop only the integrations started by your account.</p>
+    <button class="waDashBtn waDashFull" id="multiBotRefresh" type="button">Refresh bot status</button>
+    <div class="waDashStatus" id="multiBotProcessesStatus" role="status">Sign in to view your mini bots.</div>
+    <div id="multiBotProcesses" style="display:grid;gap:10px;margin-top:10px"></div>
+  </div>
+
+  <div class="waDashGrid">
+    <div class="waDashCard">
+      <h3>🔐 Admin access</h3>
+      <label class="waDashField" for="waDashToken">Dashboard token</label>
+      <input class="waDashInput" id="waDashToken" type="password" autocomplete="off" placeholder="Paste admin token">
+      <button class="waDashBtn waDashFull" id="waDashUnlock">Unlock dashboard</button>
+      <div class="waDashStatus" id="waDashAuthStatus" role="status">Enter your server admin token to continue.</div>
+    </div>
+
+    <div class="waDashCard">
+      <h3>📲 Link a WhatsApp number</h3>
+      <label class="waDashField" for="waDashPhone">International number · digits only</label>
+      <input class="waDashInput" id="waDashPhone" inputmode="numeric" autocomplete="off" placeholder="2637XXXXXXXX">
+      <button class="waDashBtn purple waDashFull" id="waDashPair" disabled>Generate pairing code</button>
+      <div class="waDashCode" id="waDashCodeBox" aria-live="polite">
+        <div class="waDashNote">PAIRING CODE</div>
+        <strong id="waDashCode"></strong>
+        <button class="waDashBtn waDashFull" id="waDashCopy">Copy code</button>
+        <div class="waDashNote">Enter this code in WhatsApp's Linked devices flow. Never share it with anyone.</div>
+      </div>
+      <div class="waDashStatus" id="waDashPairStatus" role="status"></div>
+    </div>
+  </div>
+
+  <div class="waDashCard" style="margin-top:12px">
+    <h3>🌍 Join the ALSON community</h3>
+    <a class="waDashBtn waDashFull" style="display:block;text-align:center;text-decoration:none;margin-top:10px"
+       href="https://chat.whatsapp.com/LQMrievFuQW6GyqDRxuvRu" target="_blank" rel="noopener noreferrer">
+       Join Our WhatsApp Group
+    </a>
+    <a class="waDashBtn purple waDashFull" style="display:block;text-align:center;text-decoration:none;margin-top:10px"
+       href="https://whatsapp.com/channel/0029Vb98SpC30LKMF6Se9K2d" target="_blank" rel="noopener noreferrer">
+       Follow ALSON-XMD Channel
+    </a>
+  </div>
+
+  <div class="waDashCard" style="margin-top:12px">
+    <div class="waDashTop">
+      <h3 style="margin:0">🟢 Server sessions</h3>
+      <button class="waDashBtn" id="waDashRefresh" disabled>↻ Refresh</button>
+    </div>
+    <div class="waDashStatus" id="waDashSessionStatus">Unlock the dashboard to load session status.</div>
+    <div id="waDashSessions"></div>
+  </div>
+  <p class="waDashNote" style="margin:14px 2px">Admin-only prototype. Session ownership and individual user accounts are not implemented yet. Keep this app private and use it only on a trusted device.</p>
+</section>
+
+<div class="callOverlay" id="callOverlay">
+  <div class="callWindow">
+
+    <div class="callHeader">
+      <strong id="callTitle">ALSON AI</strong>
+      <button id="closeCall">✕</button>
+    </div>
+
+    <div class="avatarPickerBar">
+  <label for="aiAvatarPicker" class="avatarPickerBtn">
+    ✨ Choose AI Avatar
+  </label>
+  <input
+    id="aiAvatarPicker"
+    type="file"
+    accept="image/*"
+    hidden
+  >
+</div>
+
+<div class="videoStage">
+      <video id="localVideo" autoplay playsinline muted></video>
+
+      <div class="aiCallAvatar" id="aiCallAvatar">
+      <div class="aiAvatarImageWrap" id="aiAvatarImageWrap">
+  <img id="aiAvatarImage" alt="ALSON AI avatar">
+</div>
+
+
+        <div class="girlAura"></div>
+        <div class="girlPortrait" id="girlPortrait" role="img" aria-label="Animated adult AI companion">
+          <div class="girlEyeBlink"></div>
+          <div class="girlMouth" id="girlMouth"></div>
+          <div class="girlHand"></div>
+        </div>
+        <div class="girlCaption">
+          ALSON AI 💗
+          <small id="girlExpression">Waiting for you…</small>
+        </div>
+        <strong id="callStatus">Ready</strong>
+      </div>
+    </div>
+
+    <div class="voiceSettings">
+
+      <label for="voiceStyle">✨ ALSON Voice Style</label>
+
+      <select id="voiceStyle">
+        <option value="default">🎀 Cute + Sweet + Cozy</option>
+        <option value="cute">🎀 Cute — Sweet & Playful</option>
+        <option value="sweet">💕 Sweet — Soft & Warm</option>
+        <option value="cool">😎 Cool — Calm & Confident</option>
+        <option value="romantic">💜 Romantic — Warm & Affectionate</option>
+        <option value="shyAngel">😇 Shy Angel — Soft & Tender</option>
+        <option value="squeaky">🐣 Extra-Squeaky Anime</option>
+        <option value="idol">✨ Bubbly Idol</option>
+        <option value="softAnime">🌸 Soft Anime Voice</option>
+        <option value="coolRomantic">💜 Cool Romantic</option>
+      </select>
+
+      <div class="voiceInfo">
+        🎙️ Gemini Live Voice Chat
+        <span>Change style anytime</span>
+      </div>
+
+    </div>
+
+    <div class="callControls">
+      <button id="micToggle">🎙️</button>
+      <button id="cameraToggle">📷</button>
+      <button id="endCall" class="endCall">☎</button>
+    </div>
+
+    <div class="voiceTranscript" id="voiceTranscript">
+      Tap the microphone and speak to ALSON AI.
+    </div>
+
+  </div>
+</div>
+
+<div class="composerWrap">
+
+  <div class="composer">
+    <textarea
+      id="input"
+      rows="1"
+      placeholder="Message ALSON AI..."
+      autocomplete="off"
+    ></textarea>
+
+    <button class="send" id="send" disabled>↑</button>
+  </div>
+
+  <div class="tools">
+    <button class="mode active">🤖 Assistant</button>
+    <button class="mode" id="whatsappBtn">📱 WhatsApp</button>
+    <button class="mode" id="charactersBtn">💜 Characters</button>
+    <button class="mode" id="voiceBtn">🎙️ Voice</button>
+    <button class="mode" id="videoBtn">📹 Video</button>
+    <button class="mode" id="singBtn">🎵 Singing Studio</button>
+  </div>
+
+
+  <section id="singStudioPanel" hidden style="padding:14px;border:1px solid #8b5cf6;border-radius:16px;margin:10px 0;background:rgba(139,92,246,.09)">
+    <h3>🎵 ALSON-AI Singing Studio</h3>
+    <p>Write a song idea, generate lyrics with ALSON-AI, then create the sung version in Suno.</p>
+    <textarea id="songIdea" rows="3" placeholder="Describe your song: Afro-pop, love, motivation, Shona..."></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <button class="mode" id="makeLyricsBtn">✍️ Generate lyrics</button>
+      <button class="mode" id="openSunoBtn">🎤 Open Suno</button>
+      <button class="mode" id="closeSingBtn">Close</button>
+    </div>
+    <p id="singStatus" role="status"></p>
+    <textarea id="songLyrics" rows="10" placeholder="Your lyrics will appear here."></textarea>
+    <button class="mode" id="copyLyricsBtn">📋 Copy lyrics</button>
+  </section>
+
+  <div class="nav">
+    <button class="active">Chat</button>
+    <button>History</button>
+    <button>Settings</button>
+  </div>
+
+</div>
+
+</div>
+
+
+<script>
+window.addEventListener("error", function(e){
+  console.error(
+    "ALSON FRONTEND ERROR:",
+    e.message,
+    "at",
+    e.filename,
+    e.lineno,
+    e.colno
+  );
+
+  const status = document.getElementById("callStatus");
+
+  if(status){
+    status.textContent =
+      "⚠️ JS error: " + e.message;
+  }
+});
+
+window.addEventListener("unhandledrejection", function(e){
+  console.error(
+    "ALSON UNHANDLED PROMISE:",
+    e.reason
+  );
+});
+
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const chat = document.getElementById("chat");
+const welcome = document.getElementById("welcome");
+const statusEl = document.getElementById("status");
+
+function updateButton(){
+  send.disabled = !input.value.trim();
+}
+
+input.addEventListener("input",()=>{
+  input.style.height="auto";
+  input.style.height=Math.min(input.scrollHeight,130)+"px";
+  updateButton();
+});
+
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+send.addEventListener("click",sendMessage);
+
+function quick(text){
+  input.value=text;
+  updateButton();
+  sendMessage();
+}
+
+function addMessage(text,type){
+  if(welcome) welcome.remove();
+
+  const row=document.createElement("div");
+  row.className=`message ${type}`;
+
+  row.innerHTML=`
+    ${type==="ai" ? '<div class="avatar">AI</div>' : ""}
+    <div class="message-content">
+      ${type==="ai" ? '<div class="sender-name">ALSON AI <svg class="verifiedBadge aiSenderBadge" aria-label="ALSON AI app badge" title="ALSON AI app badge" viewBox="0 0 24 24" role="img"><path d="M12 1.5l2.6 1.3 2.9-.1 1.1 2.7 2.5 1.4-.4 2.9 1.3 2.3-1.3 2.6.4 2.8-2.5 1.4-1.1 2.7-2.9-.1L12 22.5l-2.6-1.3-2.9.1-1.1-2.7-2.5-1.4.4-2.8L2 12.1l1.3-2.3-.4-2.9 2.5-1.4 1.1-2.7 2.9.1z" fill="#1877F2"/><path d="m7.5 12.2 2.9 2.9 6.2-6.2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' : ""}
+      <div class="bubble"></div>
+    </div>
+  `;
+
+  const displayText = type === "ai"
+    ? String(text).replace(/[🔵🔷☑️✔️✓]+\s*$/u, "").trimEnd()
+    : text;
+  row.querySelector(".bubble").textContent = displayText;
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
+
+  return row;
+}
+
+function addTyping(){
+  if(welcome) welcome.remove();
+
+  const row=document.createElement("div");
+  row.className="message ai";
+  row.id="typing";
+
+  row.innerHTML=`
+    <div class="avatar">AI</div>
+    <div class="message-content">
+      <div class="sender-name">ALSON AI <svg class="verifiedBadge aiSenderBadge" aria-label="ALSON AI app badge" title="ALSON AI app badge" viewBox="0 0 24 24" role="img"><path d="M12 1.5l2.6 1.3 2.9-.1 1.1 2.7 2.5 1.4-.4 2.9 1.3 2.3-1.3 2.6.4 2.8-2.5 1.4-1.1 2.7-2.9-.1L12 22.5l-2.6-1.3-2.9.1-1.1-2.7-2.5-1.4.4-2.8L2 12.1l1.3-2.3-.4-2.9 2.5-1.4 1.1-2.7 2.9.1z" fill="#1877F2"/><path d="m7.5 12.2 2.9 2.9 6.2-6.2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="bubble">
+        <div class="typing">
+          <i></i><i></i><i></i>
+        </div>
+      </div>
+    </div>
+  `;
+
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+const conversationHistory = [];
+
+async function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMessage(text, "user");
+
+  input.value = "";
+  input.style.height = "auto";
+  updateButton();
+
+  addTyping();
+
+  const historyForRequest = conversationHistory.slice(-20);
+
+  conversationHistory.push({
+    role: "user",
+    text: text
+  });
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + (sessionStorage.getItem("alson-ai-token") || "")
+      },
+      body: JSON.stringify({
+        message: text,
+        history: historyForRequest
+      })
+    });
+
+    const typing = document.getElementById("typing");
+    if(typing) typing.remove();
+
+    if(!response.ok){
+      let errorMessage = "Request failed.";
+
+      try {
+        const data = await response.json();
+        errorMessage = data.error || errorMessage;
+      } catch {}
+
+      conversationHistory.pop();
+      throw new Error(errorMessage);
+    }
+
+    if(!response.body){
+      conversationHistory.pop();
+      throw new Error("Streaming is not supported by this browser.");
+    }
+
+    const row = addMessage("", "ai");
+    const bubble = row.querySelector(".bubble");
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let answer = "";
+
+    while(true){
+      const { value, done } = await reader.read();
+
+      if(done) break;
+
+      answer += decoder.decode(value, {
+        stream: true
+      });
+
+      bubble.textContent = answer.replace(/[🔵🔷☑️✔️✓]+\s*$/u, "").trimEnd();
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    answer += decoder.decode();
+    bubble.textContent = answer.replace(/[🔵🔷☑️✔️✓]+\s*$/u, "").trimEnd();
+
+    conversationHistory.push({
+      role: "model",
+      text: answer
+    });
+
+    if(typeof speakAIResponse === "function"){
+      speakAIResponse(answer);
+    }
+
+    chat.scrollTop = chat.scrollHeight;
+
+  } catch(error) {
+    const typing = document.getElementById("typing");
+    if(typing) typing.remove();
+
+    addMessage(
+      "⚠️ " + (error.message || "Something went wrong."),
+      "ai"
+    );
+  }
+}
+
+
+/* THEME SYSTEM */
+const themePanel = document.getElementById("themePanel");
+const menuBtn = document.getElementById("menuBtn");
+const themeChoices = document.querySelectorAll(".themeChoice");
+
+function applyTheme(theme){
+  if(theme === "midnight"){
+    document.body.removeAttribute("data-theme");
+  }else{
+    document.body.dataset.theme = theme;
+  }
+
+  localStorage.setItem("alson-ai-theme", theme);
+
+  themeChoices.forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === theme);
+  });
+}
+
+const savedTheme = localStorage.getItem("alson-ai-theme") || "midnight";
+applyTheme(savedTheme);
+
+menuBtn.addEventListener("click", () => {
+  themePanel.classList.toggle("open");
+});
+
+themeChoices.forEach(btn => {
+  btn.addEventListener("click", () => {
+    applyTheme(btn.dataset.theme);
+    themePanel.classList.remove("open");
+  });
+});
+
+</script>
+
+
+<script>
+const callOverlay = document.getElementById("callOverlay");
+const voiceBtn = document.getElementById("voiceBtn");
+const videoBtn = document.getElementById("videoBtn");
+const closeCall = document.getElementById("closeCall");
+const endCall = document.getElementById("endCall");
+const micToggle = document.getElementById("micToggle");
+const cameraToggle = document.getElementById("cameraToggle");
+const localVideo = document.getElementById("localVideo");
+const callStatus = document.getElementById("callStatus");
+const voiceTranscript = document.getElementById("voiceTranscript");
+
+const voiceStyle = document.getElementById("voiceStyle");
+
+
+
+let callStream = null;
+let micEnabled = true;
+let cameraEnabled = true;
+let voiceMode = false;
+let isSpeaking = false;
+let restartingRecognition = false;
+
+
+
+/*
+ * Clean text before sending it to TTS.
+ *
+ * ALSON AI can still display:
+ *
+ *   Hi 😂 how are you?
+ *
+ * But the voice says:
+ *
+ *   Hi, how are you?
+ */
+function cleanForSpeech(text){
+
+  if(!text) return "";
+
+  let clean = text;
+
+  // Remove fenced code blocks.
+  clean = clean.replace(/```[\s\S]*?```/g, " ");
+
+  // Remove inline code.
+  clean = clean.replace(/`([^`]*)`/g, "$1");
+
+  // Remove markdown images.
+  clean = clean.replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
+
+  // Convert markdown links to their visible text.
+  clean = clean.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+
+  // Remove URLs.
+  clean = clean.replace(
+    /https?:\/\/\S+|www\.\S+/gi,
+    " "
+  );
+
+  // Remove markdown formatting.
+  clean = clean.replace(/[*_~>#]+/g, " ");
+
+  // Remove emojis and pictographic symbols.
+  clean = clean.replace(
+    /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,
+    " "
+  );
+
+  // Remove excessive symbols.
+  clean = clean.replace(
+    /[{}[\]<>|^~`]/g,
+    " "
+  );
+
+  // Normalize whitespace.
+  clean = clean.replace(/\s+/g, " ").trim();
+
+  return clean;
+}
+
+
+let selectedAIAvatarURL =
+  localStorage.getItem("alson_ai_avatar") || "";
+
+let avatarDanceTimer = null;
+let avatarMotionTimer = null;
+let avatarFaceProfile = null;
+let avatarImageElement = null;
+
+
+
+/* ===== ALSON REAL PIXEL AVATAR ENGINE ===== */
+
+let pixelAvatarCanvas = null;
+let pixelAvatarCtx = null;
+let pixelAvatarRAF = null;
+let pixelAvatarReady = false;
+let pixelAvatarLastTime = 0;
+let pixelAvatarMouthLevel = 0;
+let pixelAvatarTargetMouth = 0;
+let pixelAvatarBlink = 0;
+let pixelAvatarSmile = 0;
+let pixelAvatarTilt = 0;
+
+function initPixelAvatar(){
+
+  const img = document.getElementById("aiAvatarImage");
+  const wrap = document.getElementById("aiAvatarImageWrap");
+
+  if(!img || !wrap || !img.naturalWidth) return false;
+
+  let canvas = document.getElementById("alsonPixelAvatar");
+
+  if(!canvas){
+
+    canvas = document.createElement("canvas");
+    canvas.id = "alsonPixelAvatar";
+
+    canvas.style.position = "absolute";
+    canvas.style.inset = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.objectFit = "contain";
+    canvas.style.pointerEvents = "none";
+    img.style.opacity = "0";
+    canvas.style.zIndex = "5";
+
+    wrap.appendChild(canvas);
+  }
+
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+
+  pixelAvatarCanvas = canvas;
+  pixelAvatarCtx = canvas.getContext("2d", {
+    alpha: true,
+    willReadFrequently: false
+  });
+
+  pixelAvatarReady = true;
+
+  return true;
+}
+
+
+function getAvatarFacePoint(name){
+
+  const profile = avatarFaceProfile;
+
+  if(!profile?.detected) return null;
+
+  const points = profile.landmarks || [];
+
+  const indexes = {
+
+    mouthTop: 13,
+    mouthBottom: 14,
+
+    mouthLeft: 78,
+    mouthRight: 308,
+
+    leftEyeTop: 159,
+    leftEyeBottom: 145,
+
+    rightEyeTop: 386,
+    rightEyeBottom: 374,
+
+    nose: 1
+  };
+
+  const index = indexes[name];
+
+  if(index === undefined) return null;
+
+  return points[index] || null;
+}
+
+
+function drawPixelAvatar(){
+  if(!pixelAvatarReady || !pixelAvatarCanvas || !pixelAvatarCtx) return;
+
+  const img = document.getElementById("aiAvatarImage");
+  const canvas = pixelAvatarCanvas;
+  const ctx = pixelAvatarCtx;
+
+  if(!img || !img.complete || !img.naturalWidth){
+    pixelAvatarRAF = requestAnimationFrame(drawPixelAvatar);
+    return;
+  }
+
+  const now = performance.now();
+  if(!pixelAvatarLastTime) pixelAvatarLastTime = now;
+  const dt = Math.min(40, now - pixelAvatarLastTime);
+  pixelAvatarLastTime = now;
+
+  pixelAvatarMouthLevel +=
+    (pixelAvatarTargetMouth - pixelAvatarMouthLevel) *
+    Math.min(1, dt / 55);
+
+  const top = getAvatarFacePoint("mouthTop");
+  const bottom = getAvatarFacePoint("mouthBottom");
+  const left = getAvatarFacePoint("mouthLeft");
+  const right = getAvatarFacePoint("mouthRight");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if(!top || !bottom || !left || !right){
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    pixelAvatarRAF = requestAnimationFrame(drawPixelAvatar);
+    return;
+  }
+
+  const sx = canvas.width / img.naturalWidth;
+  const sy = canvas.height / img.naturalHeight;
+  const mx = (left.x + right.x) * 0.5 * canvas.width;
+  const my = (top.y + bottom.y) * 0.5 * canvas.height;
+  const mw = Math.max(8, Math.abs(right.x - left.x) * canvas.width);
+  const mh = Math.max(3, Math.abs(bottom.y - top.y) * canvas.height);
+
+  /*
+   * Inverse local warp:
+   * destination pixels close to the mouth sample from a
+   * vertically compressed source area. This stretches the
+   * existing mouth region without adding a fake overlay.
+   */
+  const level = Math.max(0, Math.min(1, pixelAvatarMouthLevel));
+  const radiusX = Math.max(12, mw * 0.72);
+  const radiusY = Math.max(9, mh * 2.8 + 2);
+  const strength = 1 + level * 0.9;
+
+  const work = document.createElement("canvas");
+  work.width = canvas.width;
+  work.height = canvas.height;
+  const wctx = work.getContext("2d", { willReadFrequently: true });
+  wctx.drawImage(img, 0, 0, work.width, work.height);
+
+  let imageData;
+  try {
+    imageData = wctx.getImageData(
+      Math.max(0, Math.floor(mx - radiusX)),
+      Math.max(0, Math.floor(my - radiusY)),
+      Math.min(work.width, Math.ceil(radiusX * 2)),
+      Math.min(work.height, Math.ceil(radiusY * 2))
+    );
+  } catch {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    pixelAvatarRAF = requestAnimationFrame(drawPixelAvatar);
+    return;
+  }
+
+  const bx = Math.max(0, Math.floor(mx - radiusX));
+  const by = Math.max(0, Math.floor(my - radiusY));
+  const bw = imageData.width;
+  const bh = imageData.height;
+  const original = new Uint8ClampedArray(imageData.data);
+  const data = imageData.data;
+
+  for(let y = 0; y < bh; y++){
+    for(let x = 0; x < bw; x++){
+      const gx = bx + x;
+      const gy = by + y;
+      const nx = (gx - mx) / radiusX;
+      const ny = (gy - my) / radiusY;
+      const r2 = nx * nx + ny * ny;
+
+      if(r2 >= 1) continue;
+
+      const falloff = (1 - r2) * (1 - r2);
+      const sourceY = my + (gy - my) / (1 + (strength - 1) * falloff);
+      const localY = Math.max(0, Math.min(bh - 1, Math.round(sourceY - by)));
+      const from = (localY * bw + x) * 4;
+      const to = (y * bw + x) * 4;
+
+      data[to] = original[from];
+      data[to + 1] = original[from + 1];
+      data[to + 2] = original[from + 2];
+      data[to + 3] = original[from + 3];
+    }
+  }
+
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  ctx.putImageData(imageData, bx, by);
+
+  pixelAvatarRAF = requestAnimationFrame(drawPixelAvatar);
+}
+
+function startPixelAvatar(){
+
+  if(!initPixelAvatar()) return;
+
+  if(pixelAvatarRAF){
+    cancelAnimationFrame(pixelAvatarRAF);
+  }
+
+  pixelAvatarLastTime = 0;
+
+  drawPixelAvatar();
+}
+
+
+function stopPixelAvatar(){
+
+  if(pixelAvatarRAF){
+
+    cancelAnimationFrame(
+      pixelAvatarRAF
+    );
+
+    pixelAvatarRAF = null;
+  }
+
+  pixelAvatarReady = false;
+}
+
+
+function setPixelAvatarMouth(level){
+
+  pixelAvatarTargetMouth =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        Number(level) || 0
+      )
+    );
+}
+
+
+function triggerPixelBlink(){
+
+  pixelAvatarBlink = 1;
+
+  setTimeout(() => {
+    pixelAvatarBlink = 0;
+  }, 130);
+}
+
+
+/* Automatically start the pixel renderer whenever
+   the selected photograph finishes loading. */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const img =
+      document.getElementById(
+        "aiAvatarImage"
+      );
+
+    if(img){
+
+      img.addEventListener(
+        "load",
+        () => {
+
+          setTimeout(
+            startPixelAvatar,
+            100
+          );
+
+        }
+      );
+    }
+  }
+);
+
+
+/* ===== REAL IMAGE AVATAR ===== */
+
+function applyAIAvatar(url){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  const wrap =
+    document.getElementById("aiAvatarImageWrap");
+
+  const img =
+    document.getElementById("aiAvatarImage");
+
+  if(!avatar || !wrap || !img) return;
+
+  if(!url){
+
+    wrap.classList.remove("active");
+
+    avatar.classList.remove(
+      "hasRealImage",
+      "faceAnalyzed"
+    );
+
+    img.removeAttribute("src");
+
+    avatarFaceProfile = null;
+    avatarImageElement = null;
+
+    return;
+  }
+
+  img.onload = async () => {
+
+    avatarImageElement = img;
+
+    avatar.classList.add("hasRealImage");
+
+    try{
+
+      if(window.ALSONFaceAI){
+
+        avatarFaceProfile =
+          await window.ALSONFaceAI.analyze(img);
+
+        if(avatarFaceProfile?.detected){
+
+          avatar.classList.add("faceAnalyzed");
+
+          console.log(
+            "🧠 ALSON avatar face profile:",
+            avatarFaceProfile.expressions
+          );
+
+          const expression =
+            document.getElementById("girlExpression");
+
+          if(expression){
+            expression.textContent =
+              "Face detected 💗";
+          }
+
+        }else{
+
+          console.warn(
+            "⚠️ No face detected in selected avatar"
+          );
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Avatar face analysis error:",
+        error
+      );
+
+    }
+
+  };
+
+  img.src = url;
+
+  wrap.classList.add("active");
+  avatar.classList.add("hasRealImage");
+
+  startCuteAvatarMotion();
+}
+
+
+/* ===== CUTE REAL-IMAGE MOTION ===== */
+
+function startCuteAvatarMotion(){
+
+  stopCuteAvatarMotion();
+
+  avatarMotionTimer = setInterval(() => {
+
+    const avatar =
+      document.getElementById("aiCallAvatar");
+
+    if(
+      !avatar ||
+      !avatar.classList.contains("hasRealImage")
+    ){
+      return;
+    }
+
+    const roll = Math.random();
+
+    avatar.classList.remove(
+      "cuteSway",
+      "cuteBounce",
+      "cuteShy"
+    );
+
+    if(roll < 0.45){
+
+      avatar.classList.add("cuteSway");
+
+    }else if(roll < 0.75){
+
+      avatar.classList.add("cuteBounce");
+
+    }else{
+
+      avatar.classList.add("cuteShy");
+
+    }
+
+    setTimeout(() => {
+
+      avatar.classList.remove(
+        "cuteSway",
+        "cuteBounce",
+        "cuteShy"
+      );
+
+    }, 1800);
+
+  }, 4200);
+}
+
+
+function stopCuteAvatarMotion(){
+
+  if(avatarMotionTimer){
+
+    clearInterval(
+      avatarMotionTimer
+    );
+
+    avatarMotionTimer = null;
+  }
+
+  document
+    .getElementById("aiCallAvatar")
+    ?.classList.remove(
+      "cuteSway",
+      "cuteBounce",
+      "cuteShy"
+    );
+}
+
+
+/* ===== CUTE DANCE ===== */
+
+function startCuteAvatarDance(){
+
+  stopCuteAvatarDance();
+
+  avatarDanceTimer =
+    setInterval(() => {
+
+      const avatar =
+        document.getElementById("aiCallAvatar");
+
+      if(
+        !avatar ||
+        !avatar.classList.contains("hasRealImage")
+      ){
+        return;
+      }
+
+      if(Math.random() < 0.35){
+
+        avatar.classList.add(
+          "cuteDancing"
+        );
+
+        setTimeout(() => {
+
+          avatar.classList.remove(
+            "cuteDancing"
+          );
+
+        }, 1800);
+      }
+
+    }, 5000);
+}
+
+
+function stopCuteAvatarDance(){
+
+  if(avatarDanceTimer){
+
+    clearInterval(
+      avatarDanceTimer
+    );
+
+    avatarDanceTimer = null;
+  }
+
+  document
+    .getElementById("aiCallAvatar")
+    ?.classList.remove(
+      "cuteDancing"
+    );
+}
+
+
+/* ===== AVATAR PICKER ===== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const picker =
+      document.getElementById(
+        "aiAvatarPicker"
+      );
+
+    if(picker){
+
+      picker.addEventListener(
+        "change",
+        event => {
+
+          const file =
+            event.target.files?.[0];
+
+          if(
+            !file ||
+            !file.type.startsWith("image/")
+          ){
+            return;
+          }
+
+          const reader =
+            new FileReader();
+
+          reader.onload = () => {
+
+            const url =
+              String(
+                reader.result || ""
+              );
+
+            try{
+
+              localStorage.setItem(
+                "alson_ai_avatar",
+                url
+              );
+
+              selectedAIAvatarURL =
+                url;
+
+            }catch(error){
+
+              console.warn(
+                "Could not persist avatar:",
+                error
+              );
+
+              selectedAIAvatarURL =
+                url;
+            }
+
+            applyAIAvatar(url);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      );
+    }
+
+    if(selectedAIAvatarURL){
+
+      applyAIAvatar(
+        selectedAIAvatarURL
+      );
+    }
+  }
+);
+
+
+async function openCall(type){
+
+  const isVideo = type === "video";
+
+  voiceMode = true;
+  isSpeaking = false;
+
+  callOverlay.classList.add("open");
+
+  const title = document.getElementById("callTitle");
+  const avatar = document.getElementById("aiCallAvatar");
+
+  if(title){
+    title.textContent =
+      isVideo
+        ? "ALSON AI • Video Call"
+        : "ALSON AI • Continuous Voice";
+  }
+
+  if(localVideo){
+    localVideo.style.display =
+      isVideo ? "block" : "none";
+  }
+
+  /*
+   * Keep the AI avatar visible.
+   * The camera is only the user's local video.
+   */
+  if(avatar){
+    avatar.style.display = "flex";
+    avatar.classList.remove("speaking");
+  }
+
+  if(!isVideo){
+
+    callStatus.textContent =
+      "Connecting to ALSON AI...";
+
+    voiceTranscript.textContent =
+      "Speak naturally. ALSON AI will keep listening.";
+
+    startAvatarExpressions();
+    startVoiceRecognition();
+    return;
+  }
+
+  callStatus.textContent =
+    "Requesting camera...";
+
+  try{
+
+    callStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: true
+      });
+
+    if(localVideo){
+      localVideo.srcObject = callStream;
+      localVideo.style.display = "block";
+    }
+
+    /*
+     * AI avatar remains the main call character.
+     */
+    if(avatar){
+      avatar.style.display = "flex";
+    }
+
+    callStatus.textContent =
+      "Connecting to ALSON AI...";
+
+    startAvatarExpressions();
+
+    /*
+     * Gemini Live uses the microphone from the
+     * existing video-call stream.
+     */
+    await startLiveVoice();
+
+    callStatus.textContent =
+      "🔴 Listening...";
+
+  }catch(error){
+
+    console.error(
+      "VIDEO CALL ERROR:",
+      error
+    );
+
+    callStatus.textContent =
+      "Camera/microphone unavailable";
+
+    voiceTranscript.textContent =
+      error?.message ||
+      "Please allow camera and microphone access.";
+
+    if(callStream){
+      callStream.getTracks().forEach(track => {
+        try{ track.stop(); }catch{}
+      });
+
+      callStream = null;
+    }
+  }
+}
+
+function floatTo16BitPCM(float32){
+  const buffer = new ArrayBuffer(float32.length * 2);
+  const view = new DataView(buffer);
+
+  for(let i = 0; i < float32.length; i++){
+    const sample =
+      Math.max(-1, Math.min(1, float32[i]));
+
+    view.setInt16(
+      i * 2,
+      sample < 0
+        ? sample * 0x8000
+        : sample * 0x7FFF,
+      true
+    );
+  }
+
+  return new Uint8Array(buffer);
+}
+
+function downsampleBuffer(buffer, inputRate, outputRate){
+
+  if(inputRate === outputRate){
+    return buffer;
+  }
+
+  const ratio =
+    inputRate / outputRate;
+
+  const newLength =
+    Math.round(buffer.length / ratio);
+
+  const result =
+    new Float32Array(newLength);
+
+  let offsetResult = 0;
+  let offsetBuffer = 0;
+
+  while(offsetResult < result.length){
+
+    const nextOffsetBuffer =
+      Math.round((offsetResult + 1) * ratio);
+
+    let accum = 0;
+    let count = 0;
+
+    for(
+      let i = offsetBuffer;
+      i < nextOffsetBuffer &&
+      i < buffer.length;
+      i++
+    ){
+      accum += buffer[i];
+      count++;
+    }
+
+    result[offsetResult] =
+      count ? accum / count : 0;
+
+    offsetResult++;
+    offsetBuffer =
+      nextOffsetBuffer;
+  }
+
+  return result;
+}
+
+function arrayBufferToBase64(buffer){
+
+  const bytes =
+    new Uint8Array(buffer);
+
+  let binary = "";
+
+  const chunk = 0x8000;
+
+  for(
+    let i = 0;
+    i < bytes.length;
+    i += chunk
+  ){
+    binary += String.fromCharCode(
+      ...bytes.subarray(
+        i,
+        i + chunk
+      )
+    );
+  }
+
+  return btoa(binary);
+}
+
+function base64ToBytes(base64){
+
+  const binary =
+    atob(base64);
+
+  const bytes =
+    new Uint8Array(binary.length);
+
+  for(
+    let i = 0;
+    i < binary.length;
+    i++
+  ){
+    bytes[i] =
+      binary.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+
+/* ===== ALSON AI COMPANION EXPRESSIONS ===== */
+
+let avatarBlinkTimer = null;
+let avatarSpeakingTimer = null;
+
+
+/* ===== REAL IMAGE FACE MOTION ===== */
+
+let avatarMouthTimer = null;
+let avatarHandTimer = null;
+
+function updateRealAvatarMouth(open = false){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  const img =
+    document.getElementById("aiAvatarImage");
+
+  if(
+    !avatar ||
+    !img ||
+    !avatar.classList.contains("hasRealImage")
+  ){
+    return;
+  }
+
+  /*
+   * Use the detected mouth landmarks to determine
+   * where the mouth is located in the selected image.
+   */
+  const profile = avatarFaceProfile;
+
+  if(!profile?.detected || !profile.landmarks?.length){
+    return;
+  }
+
+  const landmarks = profile.landmarks;
+
+  /*
+   * MediaPipe mouth region:
+   * upper/lower lip landmarks are used to estimate
+   * the center of the mouth.
+   */
+  const points = [
+    landmarks[13],
+    landmarks[14],
+    landmarks[78],
+    landmarks[308]
+  ].filter(Boolean);
+
+  if(!points.length) return;
+
+  const x =
+    points.reduce((sum,p) => sum + p.x, 0) /
+    points.length;
+
+  const y =
+    points.reduce((sum,p) => sum + p.y, 0) /
+    points.length;
+
+  let mouth =
+    document.getElementById("realAvatarMouth");
+
+  if(!mouth){
+
+    mouth =
+      document.createElement("div");
+
+    mouth.id =
+      "realAvatarMouth";
+
+    mouth.className =
+      "realAvatarMouth";
+
+    const wrap =
+      document.getElementById(
+        "aiAvatarImageWrap"
+      );
+
+    if(!wrap) return;
+
+    wrap.appendChild(mouth);
+  }
+
+  mouth.style.left =
+    `${x * 100}%`;
+
+  mouth.style.top =
+    `${y * 100}%`;
+
+  mouth.classList.toggle(
+    "open",
+    open
+  );
+
+  mouth.style.setProperty(
+    "--mouth-open",
+    `${open ? 12 + Math.random() * 14 : 2}px`
+  );
+}
+
+
+function startRealAvatarMouth(){
+
+  if(avatarMouthTimer){
+    clearInterval(avatarMouthTimer);
+  }
+
+  avatarMouthTimer =
+    setInterval(() => {
+
+      const avatar =
+        document.getElementById(
+          "aiCallAvatar"
+        );
+
+      if(
+        !avatar ||
+        !avatar.classList.contains(
+          "speaking"
+        )
+      ){
+        updateRealAvatarMouth(false);
+        return;
+      }
+
+      /*
+       * Small randomized opening gives the
+       * detected mouth a speech-like motion.
+       */
+      updateRealAvatarMouth(
+        Math.random() > 0.25
+      );
+
+    }, 85);
+}
+
+
+function stopRealAvatarMouth(){
+
+  if(avatarMouthTimer){
+
+    clearInterval(
+      avatarMouthTimer
+    );
+
+    avatarMouthTimer = null;
+  }
+
+  updateRealAvatarMouth(false);
+}
+
+
+/* ===== CUTE HAND REACTION ===== */
+
+function spawnAvatarHandReaction(){
+
+  const avatar =
+    document.getElementById(
+      "aiCallAvatar"
+    );
+
+  if(
+    !avatar ||
+    !avatar.classList.contains(
+      "hasRealImage"
+    )
+  ){
+    return;
+  }
+
+  let hand =
+    document.getElementById(
+      "realAvatarHand"
+    );
+
+  if(!hand){
+
+    hand =
+      document.createElement("div");
+
+    hand.id =
+      "realAvatarHand";
+
+    hand.className =
+      "realAvatarHand";
+
+    hand.textContent = "🫶";
+
+    avatar.appendChild(hand);
+  }
+
+  hand.classList.add("show");
+
+  setTimeout(() => {
+    hand.classList.remove("show");
+  }, 1700);
+}
+
+
+function startAvatarHandReactions(){
+
+  if(avatarHandTimer){
+    clearInterval(
+      avatarHandTimer
+    );
+  }
+
+  avatarHandTimer =
+    setInterval(() => {
+
+      if(
+        Math.random() < 0.18
+      ){
+        spawnAvatarHandReaction();
+      }
+
+    }, 5500);
+}
+
+
+function stopAvatarHandReactions(){
+
+  if(avatarHandTimer){
+
+    clearInterval(
+      avatarHandTimer
+    );
+
+    avatarHandTimer = null;
+  }
+
+  document
+    .getElementById(
+      "realAvatarHand"
+    )
+    ?.classList.remove("show");
+}
+
+
+/* ===== START ALL REAL AVATAR MOTION ===== */
+
+function startRealAvatarMotion(){
+
+  startRealAvatarMouth();
+  startAvatarHandReactions();
+
+}
+
+
+function stopRealAvatarMotion(){
+
+  stopRealAvatarMouth();
+  stopAvatarHandReactions();
+
+}
+
+
+function setAvatarSpeaking(active){
+
+  const avatar = document.getElementById("aiCallAvatar");
+  const portrait = document.getElementById("girlPortrait");
+
+  if(!avatar || !portrait) return;
+
+  avatar.classList.toggle("speaking", active);
+  portrait.classList.toggle("speaking", active);
+
+  if(active){
+    startRealAvatarMouth();
+
+    if(window.ALSONPixelAudio){
+      window.ALSONPixelAudio.active = true;
+    }
+
+    // PCM playback now drives the mouth level.
+
+  }else{
+
+    stopRealAvatarMouth();
+
+    if(window.ALSONPixelAudio){
+      window.ALSONPixelAudio.active = false;
+    }
+
+    setPixelAvatarMouth(0);
+  }
+
+  if(avatarSpeakingTimer){
+    clearInterval(avatarSpeakingTimer);
+    avatarSpeakingTimer = null;
+  }
+
+  if(active){
+
+    avatarSpeakingTimer = setInterval(() => {
+
+      if(!portrait.classList.contains("speaking")){
+        return;
+      }
+
+      const mouth = document.getElementById("girlMouth");
+
+      if(mouth){
+        mouth.style.setProperty(
+          "--mouth-open",
+          `${6 + Math.random() * 12}px`
+        );
+      }
+
+    }, 80);
+  }
+}
+
+function avatarBlink(){
+
+  const portrait =
+    document.getElementById("girlPortrait");
+
+  if(!portrait) return;
+
+  portrait.classList.add("blinking");
+
+  setTimeout(() => {
+    portrait.classList.remove("blinking");
+  }, 120);
+}
+
+function scheduleAvatarBlink(){
+
+  if(avatarBlinkTimer){
+    clearTimeout(avatarBlinkTimer);
+  }
+
+  avatarBlinkTimer = setTimeout(() => {
+
+    avatarBlink();
+
+    scheduleAvatarBlink();
+
+  }, 2500 + Math.random() * 4500);
+}
+
+function setAvatarBlush(active = true){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(avatar){
+    avatar.classList.toggle("blushing", active);
+  }
+}
+
+function spawnHeart(){
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(!avatar) return;
+
+  const heart =
+    document.createElement("span");
+
+  heart.className = "girlHeart";
+
+  heart.textContent =
+    Math.random() > .5 ? "💗" : "💕";
+
+  heart.style.left =
+    `${25 + Math.random() * 50}%`;
+
+  avatar.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 3600);
+}
+
+function avatarReaction(){
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(!avatar) return;
+
+  const roll = Math.random();
+
+  if(roll < .5){
+
+    setAvatarBlush(true);
+
+    if(expression){
+      expression.textContent = "Aww… 💗";
+    }
+
+  }else if(roll < .75){
+
+    avatar.classList.add("blushing");
+    avatar.classList.add("shy");
+
+    if(expression){
+      expression.textContent = "Hehe… 💕";
+    }
+
+    setTimeout(() => {
+
+      avatar.classList.remove("shy");
+
+      if(expression){
+        expression.textContent = "I'm listening…";
+      }
+
+    }, 2600);
+
+  }else{
+
+    setAvatarBlush(false);
+
+    if(expression){
+      expression.textContent = "I'm listening…";
+    }
+  }
+
+  if(Math.random() < .45){
+    spawnHeart();
+  }
+}
+
+function startAvatarExpressions(){
+
+  scheduleAvatarBlink();
+  startRealAvatarMotion();
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  if(expression){
+    expression.textContent =
+      "I'm listening…";
+  }
+}
+
+function stopAvatarExpressions(){
+
+  stopRealAvatarMotion();
+
+  if(avatarBlinkTimer){
+    clearTimeout(avatarBlinkTimer);
+    avatarBlinkTimer = null;
+  }
+
+  if(avatarSpeakingTimer){
+    clearInterval(avatarSpeakingTimer);
+    avatarSpeakingTimer = null;
+  }
+
+  setAvatarSpeaking(false);
+
+  const avatar =
+    document.getElementById("aiCallAvatar");
+
+  if(avatar){
+    avatar.classList.remove(
+      "blushing",
+      "shy",
+      "speaking"
+    );
+  }
+}
+
+/* ===== GEMINI LIVE STATE ===== */
+
+let liveSocket = null;
+let liveAudioContext = null;
+let liveMediaStream = null;
+let liveSource = null;
+let liveProcessor = null;
+let livePlaybackContext = null;
+let livePlaybackTime = 0;
+let liveAudioSources = new Set();
+let livePlaybackCancelled = false;
+let liveConnected = false;
+let liveInputStarted = false;
+
+function liveSetStatus(text){
+  const status = document.getElementById("callStatus");
+
+  if(status){
+    status.textContent = text || "";
+  }
+
+  const expression =
+    document.getElementById("girlExpression");
+
+  if(expression && text){
+    expression.textContent = text;
+  }
+}
+
+function playLivePCM(base64){
+  if (livePlaybackCancelled) return;
+
+  try{
+
+    const bytes =
+      base64ToBytes(base64);
+
+    const samples =
+      new Int16Array(
+        bytes.buffer,
+        bytes.byteOffset,
+        Math.floor(
+          bytes.byteLength / 2
+        )
+      );
+
+    if(!livePlaybackContext){
+
+      livePlaybackContext =
+        new AudioContext();
+
+    }
+
+    const ctx =
+      livePlaybackContext;
+
+    if(ctx.state === "suspended"){
+      ctx.resume();
+    }
+
+    const audioBuffer =
+      ctx.createBuffer(
+        1,
+        samples.length,
+        24000
+      );
+
+    const channel =
+      audioBuffer.getChannelData(0);
+
+    for(
+      let i = 0;
+      i < samples.length;
+      i++
+    ){
+      channel[i] =
+        samples[i] / 32768;
+    }
+
+    const source =
+      ctx.createBufferSource();
+
+    source.buffer =
+      audioBuffer;
+
+    source.connect(ctx.destination);
+
+    // Measure the real PCM chunk before scheduling playback.
+    let sumSquares = 0;
+    let peak = 0;
+
+    for (let i = 0; i < channel.length; i++) {
+      const value = channel[i];
+      sumSquares += value * value;
+      peak = Math.max(peak, Math.abs(value));
+    }
+
+    const rms = channel.length
+      ? Math.sqrt(sumSquares / channel.length)
+      : 0;
+
+    const mouthLevel = Math.max(
+      0,
+      Math.min(1, rms * 5.5 + peak * 0.18)
+    );
+
+    setPixelAvatarMouth(mouthLevel);
+
+    // Smoothly return toward closed lips as this chunk ends.
+    const chunkDuration = audioBuffer.duration;
+    setTimeout(() => {
+      if (liveAudioSources.size <= 1) {
+        setPixelAvatarMouth(0);
+      }
+    }, Math.max(30, chunkDuration * 1000));
+
+    liveAudioSources.add(source);
+
+    source.onended = () => {
+      liveAudioSources.delete(source);
+    };
+
+    const now =
+      ctx.currentTime;
+
+    if(livePlaybackTime < now){
+      livePlaybackTime =
+        now + 0.03;
+    }
+
+    source.start(
+      livePlaybackTime
+    );
+
+    livePlaybackTime +=
+      audioBuffer.duration;
+
+  }catch(error){
+
+    console.error(
+      "LIVE AUDIO PLAYBACK ERROR:",
+      error
+    );
+
+  }
+}
+
+async function startLiveVoice(){
+
+  if(liveInputStarted){
+    return;
+  }
+
+  try{
+
+    liveSetStatus(
+      "Connecting to ALSON AI..."
+    );
+
+    const protocol =
+      location.protocol === "https:"
+        ? "wss"
+        : "ws";
+
+    const selectedVoiceStyle =
+      voiceStyle?.value ||
+      localStorage.getItem("alson-ai-live-style") || "default" ||
+      "default";
+
+    if(voiceStyle){
+      voiceStyle.value = selectedVoiceStyle;
+      localStorage.setItem(
+        "alson-ai-live-style",
+        selectedVoiceStyle
+      );
+    }
+
+    liveSocket =
+      new WebSocket(
+        `${protocol}://${location.host}/api/live?style=${encodeURIComponent(selectedVoiceStyle)}`
+      );
+
+    liveSocket.onopen =
+      async () => {
+
+        liveConnected = true;
+
+        liveSetStatus(
+          "Requesting microphone..."
+        );
+
+        try{
+
+          const existingAudioTrack =
+            callStream?.getAudioTracks?.()[0] || null;
+
+          if(existingAudioTrack){
+            // Video Call already opened the microphone.
+            // Reuse that same track instead of opening a second mic.
+            liveMediaStream =
+              new MediaStream([existingAudioTrack]);
+          }else{
+            liveMediaStream =
+              await navigator.mediaDevices
+                .getUserMedia({
+                  audio: {
+                    channelCount: 1,
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                  },
+                  video: false
+                });
+          }
+
+          liveAudioContext =
+            new AudioContext();
+
+          await liveAudioContext.resume();
+
+          liveSource =
+            liveAudioContext
+              .createMediaStreamSource(
+                liveMediaStream
+              );
+
+          liveProcessor =
+            liveAudioContext
+              .createScriptProcessor(
+                4096,
+                1,
+                1
+              );
+
+          liveProcessor.onaudioprocess =
+            event => {
+
+              if(
+                !liveConnected ||
+                !liveSocket ||
+                liveSocket.readyState !==
+                  WebSocket.OPEN ||
+                !micEnabled
+              ){
+                return;
+              }
+
+              const input =
+                event.inputBuffer
+                  .getChannelData(0);
+
+              const downsampled =
+                downsampleBuffer(
+                  input,
+                  liveAudioContext.sampleRate,
+                  16000
+                );
+
+              const pcm =
+                floatTo16BitPCM(
+                  downsampled
+                );
+
+              liveSocket.send(
+                JSON.stringify({
+                  type: "audio",
+                  data:
+                    arrayBufferToBase64(pcm),
+                  mimeType:
+                    "audio/pcm;rate=16000"
+                })
+              );
+            };
+
+          liveSource.connect(
+            liveProcessor
+          );
+
+          liveProcessor.connect(
+            liveAudioContext.destination
+          );
+
+          liveInputStarted = true;
+
+          liveSetStatus(
+            "🔴 Listening..."
+          );
+
+          voiceTranscript.textContent =
+            "Speak to ALSON AI...";
+
+        }catch(error){
+
+          console.error(
+            "LIVE MIC ERROR:",
+            error
+          );
+
+          liveSetStatus(
+            "Microphone permission required"
+          );
+        }
+      };
+
+    liveSocket.onmessage =
+      event => {
+
+        try{
+
+          const message =
+            JSON.parse(event.data);
+
+          if(message.type === "audio"){
+
+            if (livePlaybackCancelled) return;
+
+            playLivePCM(
+              message.data
+            );
+
+            setAvatarSpeaking(true);
+
+            liveSetStatus(
+              "🔊 ALSON AI is speaking..."
+            );
+          }
+
+          if(
+            message.type ===
+            "input_transcript"
+          ){
+
+            livePlaybackCancelled = false;
+
+            voiceTranscript.textContent =
+              "You: " + message.text;
+          }
+
+          if(
+            message.type ===
+            "output_transcript"
+          ){
+
+            voiceTranscript.textContent =
+              "ALSON AI: " + message.text;
+          }
+
+          if(
+            message.type ===
+            "turn_complete"
+          ){
+
+            setAvatarSpeaking(false);
+
+            avatarReaction();
+
+            liveSetStatus(
+              "🔴 Listening..."
+            );
+          }
+
+          if(message.type === "error"){
+
+            console.error(
+              "LIVE SERVER ERROR:",
+              message.error
+            );
+
+            liveSetStatus(
+              "Voice connection error"
+            );
+          }
+
+        }catch(error){
+
+          console.error(
+            "LIVE MESSAGE ERROR:",
+            error
+          );
+
+        }
+      };
+
+    liveSocket.onerror =
+      error => {
+
+        console.error(
+          "LIVE WEBSOCKET ERROR:",
+          error
+        );
+
+        liveSetStatus(
+          "Voice connection failed"
+        );
+      };
+
+    liveSocket.onclose =
+      () => {
+
+        liveConnected = false;
+        liveInputStarted = false;
+
+        liveSetStatus(
+          "Voice connection closed"
+        );
+      };
+
+  }catch(error){
+
+    console.error(
+      "LIVE START ERROR:",
+      error
+    );
+
+    liveSetStatus(
+      "Unable to start voice"
+    );
+  }
+}
+
+function stopLiveVoice(){
+
+  liveConnected = false;
+  liveInputStarted = false;
+
+  if(liveProcessor){
+
+    try{
+      liveProcessor.disconnect();
+    }catch{}
+
+    liveProcessor = null;
+  }
+
+  if(liveSource){
+
+    try{
+      liveSource.disconnect();
+    }catch{}
+
+    liveSource = null;
+  }
+
+  if(liveMediaStream){
+
+    liveMediaStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+    liveMediaStream = null;
+  }
+
+  if(liveAudioContext){
+
+    try{
+      liveAudioContext.close();
+    }catch{}
+
+    liveAudioContext = null;
+  }
+
+  if(liveSocket){
+
+    try{
+      liveSocket.close();
+    }catch{}
+
+    liveSocket = null;
+  }
+
+  liveSetStatus("Ready");
+}
+
+if(voiceStyle){
+  voiceStyle.addEventListener("change", () => {
+
+    localStorage.setItem(
+      "alson-ai-live-style",
+      voiceStyle.value
+    );
+
+    /*
+     * Style is applied when the next Live session starts.
+     * Restart the current session so the new personality
+     * takes effect immediately.
+     */
+    if(liveConnected){
+      stopLiveVoice();
+      setTimeout(() => {
+        startLiveVoice();
+      }, 250);
+    }
+  });
+
+  const savedStyle =
+    localStorage.getItem("alson-ai-live-style");
+
+  if(savedStyle){
+    voiceStyle.value = savedStyle;
+  }
+}
+
+function startVoiceRecognition(){
+  startLiveVoice();
+}
+
+function pauseVoiceRecognition(){
+  stopLiveVoice();
+}
+
+function stopSpeaking(){
+
+  livePlaybackCancelled = true;
+
+  for(const source of liveAudioSources){
+    try{
+      source.stop(0);
+    }catch{}
+  }
+
+  liveAudioSources.clear();
+  setAvatarSpeaking(false);
+
+  if(livePlaybackContext){
+    livePlaybackTime =
+      livePlaybackContext.currentTime;
+  }
+
+  if(
+    liveSocket &&
+    liveSocket.readyState === WebSocket.OPEN
+  ){
+    try{
+      liveSocket.send(
+        JSON.stringify({
+          type: "interrupt"
+        })
+      );
+    }catch{}
+  }
+
+  liveSetStatus(
+    liveConnected
+      ? "🔴 Listening..."
+      : "Ready"
+  );
+}
+
+function speakAIResponse(text){
+  // Gemini Live supplies native audio.
+  if(voiceMode && liveConnected){
+    return;
+  }
+}
+
+
+
+/*
+ * Close the entire voice/video session.
+ */
+function closeCallWindow(){
+
+  voiceMode = false;
+  isSpeaking = false;
+
+  stopSpeaking();
+  stopLiveVoice();
+  stopAvatarExpressions();
+  stopCuteAvatarDance();
+
+  if(callStream){
+
+    callStream
+      .getTracks()
+      .forEach(
+        track => track.stop()
+      );
+
+    callStream = null;
+  }
+
+  localVideo.srcObject = null;
+
+  callOverlay.classList.remove("open");
+
+  callStatus.textContent =
+    "Ready";
+
+  voiceTranscript.textContent =
+    "Tap the microphone and speak to ALSON AI.";
+
+  micEnabled = true;
+  cameraEnabled = true;
+
+  micToggle.textContent = "🎙️";
+  cameraToggle.textContent = "📷";
+}
+
+
+voiceBtn.addEventListener(
+  "click",
+  () => openCall("voice")
+);
+
+videoBtn.addEventListener(
+  "click",
+  () => openCall("video")
+);
+
+closeCall.addEventListener(
+  "click",
+  closeCallWindow
+);
+
+endCall.addEventListener(
+  "click",
+  closeCallWindow
+);
+
+
+micToggle.addEventListener(
+  "click",
+  () => {
+
+    micEnabled = !micEnabled;
+
+    if(liveMediaStream){
+
+      liveMediaStream
+        .getAudioTracks()
+        .forEach(track => {
+          track.enabled = micEnabled;
+        });
+    }
+
+    micToggle.textContent =
+      micEnabled
+        ? "🎙️"
+        : "🔇";
+
+    if(micEnabled){
+
+      liveSetStatus(
+        liveConnected
+          ? "🔴 Listening..."
+          : "Ready"
+      );
+
+    }else{
+
+      liveSetStatus(
+        "🔇 Microphone muted"
+      );
+
+      stopSpeaking();
+    }
+  }
+);
+
+
+cameraToggle.addEventListener(
+  "click",
+  () => {
+
+    if(!callStream) return;
+
+    const track =
+      callStream.getVideoTracks()[0];
+
+    if(!track) return;
+
+    cameraEnabled =
+      !cameraEnabled;
+
+    track.enabled =
+      cameraEnabled;
+
+    cameraToggle.textContent =
+      cameraEnabled
+        ? "📷"
+        : "🚫";
+  }
+);
+
+
+/*
+ * Stop speech when the page is hidden.
+ * The voice session can be restarted when the
+ * browser allows it again.
+ */
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if(document.hidden){
+
+      stopSpeaking();
+      pauseVoiceRecognition();
+
+    }else if(
+      callOverlay.classList.contains("open") &&
+      voiceMode &&
+      micEnabled
+    ){
+
+      startVoiceRecognition();
+    }
+  }
+);
+</script>
+
+
+<script>
+(() => {
+  const panel = document.getElementById("singStudioPanel");
+  const button = document.getElementById("singBtn");
+  const idea = document.getElementById("songIdea");
+  const lyrics = document.getElementById("songLyrics");
+  const status = document.getElementById("singStatus");
+
+  if (!panel || !button || button.dataset.wired) return;
+  button.dataset.wired = "1";
+
+  button.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) panel.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+
+  document.getElementById("closeSingBtn").addEventListener("click", () => panel.hidden = true);
+  document.getElementById("openSunoBtn").addEventListener("click", () => {
+    window.open("https://suno.com/create", "_blank", "noopener");
+  });
+
+  document.getElementById("makeLyricsBtn").addEventListener("click", async () => {
+    const prompt = idea.value.trim();
+    if (!prompt) {
+      status.textContent = "Describe your song first.";
+      return;
+    }
+
+    status.textContent = "Writing your lyrics…";
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          message: "Write original, singable song lyrics from this idea: " + prompt +
+            ". Include a title and clearly labeled [Verse], [Chorus], and optional [Bridge]. " +
+            "Return only the lyrics, with no explanation.",
+          history: [],
+          character: "assistant"
+        })
+      });
+      if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+      lyrics.value = await response.text();
+      status.textContent = "Lyrics ready. Copy them, then open Suno to generate the sung song.";
+    } catch (error) {
+      status.textContent = "Could not generate lyrics: " + error.message;
+    }
+  });
+
+  document.getElementById("copyLyricsBtn").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(lyrics.value);
+      status.textContent = "Lyrics copied.";
+    } catch {
+      lyrics.focus();
+      lyrics.select();
+      status.textContent = "Select and copy the lyrics manually.";
+    }
+  });
+})();
+</script>
+
+
+<script>
+(() => {
+  const panel = document.getElementById("whatsappDashboard");
+  const openBtn = document.getElementById("whatsappBtn");
+  const closeBtn = document.getElementById("waDashClose");
+  const tokenInput = document.getElementById("waDashToken");
+  const unlockBtn = document.getElementById("waDashUnlock");
+  const authStatus = document.getElementById("waDashAuthStatus");
+  const phoneInput = document.getElementById("waDashPhone");
+  const pairBtn = document.getElementById("waDashPair");
+  const pairStatus = document.getElementById("waDashPairStatus");
+  const codeBox = document.getElementById("waDashCodeBox");
+  const codeText = document.getElementById("waDashCode");
+  const copyBtn = document.getElementById("waDashCopy");
+  const refreshBtn = document.getElementById("waDashRefresh");
+  const sessionStatus = document.getElementById("waDashSessionStatus");
+  const sessionsBox = document.getElementById("waDashSessions");
+  let token = "";
+  let busy = false;
+  let searchForm;
+  let pageInfo;
+  let previousButton;
+  let nextButton;
+  const PAGE_SIZE = 24;
+  let currentPage = 1;
+  let totalCharacters = 0;
+  let availableCategories = ["All"];
+  let searchQuery = "";
+  let searchControlsReady = false;
+
+  function setStatus(el, message, bad = false) {
+    el.textContent = message;
+    el.style.color = bad ? "#ff9ba7" : "#aebbd0";
+  }
+
+  function setUnlocked(value) {
+    pairBtn.disabled = !value || busy;
+    refreshBtn.disabled = !value || busy;
+  }
+
+  async function api(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Request failed (" + response.status + ").");
+    return data;
+  }
+
+  openBtn?.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    openBtn.classList.toggle("active", !panel.hidden);
+    if (!panel.hidden) panel.scrollTop = 0;
+  });
+
+  closeBtn.addEventListener("click", () => {
+    panel.hidden = true;
+    openBtn.classList.remove("active");
+  });
+
+  unlockBtn.addEventListener("click", async () => {
+    const candidate = tokenInput.value.trim();
+    if (!candidate) {
+      setStatus(authStatus, "Enter the admin token first.", true);
+      return;
+    }
+    token = candidate;
+    unlockBtn.disabled = true;
+    try {
+      await api("/api/whatsapp/sessions");
+      tokenInput.value = "";
+      setStatus(authStatus, "Admin access verified for this page session.");
+      setUnlocked(true);
+      await refreshSessions();
+    } catch (error) {
+      token = "";
+      setUnlocked(false);
+      setStatus(authStatus, error.message, true);
+    } finally {
+      unlockBtn.disabled = false;
+    }
+  });
+
+  async function refreshSessions() {
+    if (!token || busy) return;
+    refreshBtn.disabled = true;
+    setStatus(sessionStatus, "Loading sessions…");
+    try {
+      const data = await api("/api/whatsapp/sessions");
+      sessionsBox.replaceChildren();
+      if (!data.sessions?.length) {
+        const empty = document.createElement("div");
+        empty.className = "waDashEmpty";
+        empty.textContent = "No sessions are currently loaded in this server process.";
+        sessionsBox.append(empty);
+      } else {
+        for (const item of data.sessions) {
+          const row = document.createElement("div");
+          row.className = "waDashSession";
+          const info = document.createElement("div");
+          const number = document.createElement("div");
+          number.className = "waDashPhone";
+          number.textContent = item.phone;
+          const pill = document.createElement("span");
+          pill.className = "waDashPill" + (item.status === "connected" ? " connected" : item.status === "error" || item.status === "logged_out" ? " error" : "");
+          pill.textContent = String(item.status || "unknown").replaceAll("_", " ");
+          info.append(number, pill);
+
+          const disconnect = document.createElement("button");
+          disconnect.className = "waDashBtn danger";
+          disconnect.textContent = "Disconnect";
+          disconnect.disabled = busy;
+          disconnect.addEventListener("click", async () => {
+            if (!confirm("Disconnect the session for " + item.phone + "?")) return;
+            try {
+              await api("/api/whatsapp/sessions/" + encodeURIComponent(item.phone), { method: "DELETE" });
+              await refreshSessions();
+            } catch (error) {
+              setStatus(sessionStatus, error.message, true);
+            }
+          });
+          row.append(info, disconnect);
+          sessionsBox.append(row);
+        }
+      }
+      setStatus(sessionStatus, "Updated " + new Date().toLocaleTimeString());
+    } catch (error) {
+      setStatus(sessionStatus, error.message, true);
+    } finally {
+      refreshBtn.disabled = !token || busy;
+    }
+  }
+
+  refreshBtn.addEventListener("click", refreshSessions);
+
+  pairBtn.addEventListener("click", async () => {
+    const phone = phoneInput.value.replace(/\D/g, "");
+    if (!/^\d{8,15}$/.test(phone)) {
+      setStatus(pairStatus, "Enter a valid international number using digits only.", true);
+      return;
+    }
+    busy = true;
+    setUnlocked(false);
+    codeBox.style.display = "none";
+    setStatus(pairStatus, "Requesting a pairing code… Keep this page open.");
+    try {
+      const data = await api("/api/whatsapp/pair", {
+        method: "POST",
+        body: JSON.stringify({ phone })
+      });
+      codeText.textContent = data.pairingCode;
+      codeBox.style.display = "block";
+      setStatus(pairStatus, "Code returned. Complete linking on your phone.");
+      await refreshSessions();
+    } catch (error) {
+      setStatus(pairStatus, error.message, true);
+    } finally {
+      busy = false;
+      setUnlocked(Boolean(token));
+    }
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(codeText.textContent);
+      copyBtn.textContent = "Copied ✓";
+      setTimeout(() => copyBtn.textContent = "Copy code", 1600);
+    } catch {
+      setStatus(pairStatus, "Clipboard unavailable. Select the code and copy it manually.", true);
+    }
+  });
+
+  tokenInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") unlockBtn.click();
+  });
+})();
+</script>
+
+<script>
+// MULTIBOT_ACCOUNT_PAIRING_V1
+(() => {
+  const $ = id => document.getElementById(id);
+  const panel = $("whatsappDashboard");
+  const botSelect = $("multiBotSelect");
+  const phoneInput = $("multiBotPhone");
+  const pairButton = $("multiBotPair");
+  const status = $("multiBotStatus");
+  const codeBox = $("multiBotCodeBox");
+  const codeText = $("multiBotCode");
+  const copyButton = $("multiBotCopy");
+
+  if (!panel || !botSelect || !phoneInput || !pairButton) return;
+
+  const accountToken = () => sessionStorage.getItem("alson-ai-token") || "";
+  const allowedBots = new Set(["alson", "alson-xmd", "alson-bot"]);
+  let busy = false;
+
+  function showStatus(message, bad = false) {
+    status.textContent = message;
+    status.style.color = bad ? "#ff9ba7" : "#aebbd0";
+  }
+
+  async function request(url, options = {}) {
+    const token = accountToken();
+    if (!token) throw new Error("Sign in to your ALSON-AI account first.");
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Request failed (" + response.status + ").");
+    return data;
+  }
+
+  async function loadBots() {
+    try {
+      const data = await request("/api/multibot/bots");
+      const available = new Set((data.bots || []).map(bot => bot.id));
+      for (const option of botSelect.options) {
+        option.disabled = !allowedBots.has(option.value) || !available.has(option.value);
+      }
+      if (botSelect.selectedOptions[0]?.disabled) {
+        showStatus("The selected bot is not available. Check the bot files.", true);
+      } else {
+        showStatus("Choose one bot and enter the WhatsApp number to link.");
+      }
+    } catch (error) {
+      showStatus(error.message, true);
+    }
+  }
+
+  pairButton.addEventListener("click", async () => {
+    if (busy) return;
+
+    const bot = botSelect.value;
+    const phone = phoneInput.value.replace(/\D/g, "");
+    if (!allowedBots.has(bot)) {
+      showStatus("Choose one of the three supported bots.", true);
+      return;
+    }
+    if (!/^\d{8,15}$/.test(phone)) {
+      showStatus("Enter a valid international number using 8–15 digits.", true);
+      return;
+    }
+
+    busy = true;
+    pairButton.disabled = true;
+    codeBox.style.display = "none";
+    showStatus("Starting the selected bot and requesting its pairing code. Keep this page open.");
+
+    try {
+      const data = await request("/api/multibot/pair", {
+        method: "POST",
+        body: JSON.stringify({ bot, phone })
+      });
+      codeText.textContent = data.pairingCode;
+      codeBox.style.display = "block";
+      showStatus("Pairing code received for " + botSelect.selectedOptions[0].text + ".");
+    } catch (error) {
+      showStatus(error.message, true);
+    } finally {
+      busy = false;
+      pairButton.disabled = false;
+    }
+  });
+
+  copyButton.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(codeText.textContent);
+      copyButton.textContent = "Copied ✓";
+    } catch {
+      showStatus("Clipboard unavailable. Select the code and copy it manually.", true);
+    }
+  });
+
+  const processesBox = $("multiBotProcesses");
+  const processesStatus = $("multiBotProcessesStatus");
+  const refreshProcessesButton = $("multiBotRefresh");
+
+  async function loadProcesses() {
+    if (!processesBox || !processesStatus) return;
+    processesStatus.textContent = "Loading your mini bots…";
+    processesBox.replaceChildren();
+
+    try {
+      const data = await request("/api/multibot/processes");
+      const processes = Array.isArray(data.processes) ? data.processes : [];
+
+      if (!processes.length) {
+        processesStatus.textContent = "No active mini bots for this account yet.";
+        return;
+      }
+
+      processesStatus.textContent = processes.length + " active integration(s).";
+      for (const proc of processes) {
+        const card = document.createElement("div");
+        card.className = "waDashCard";
+        card.style.margin = "0";
+
+        const title = document.createElement("strong");
+        title.textContent = proc.name || proc.bot || "Mini bot";
+
+        const details = document.createElement("div");
+        details.className = "waDashNote";
+        details.textContent = "Number: " + proc.phone + " · Status: " + proc.state;
+
+        const stop = document.createElement("button");
+        stop.className = "waDashBtn waDashFull";
+        stop.type = "button";
+        stop.textContent = "Stop this mini bot";
+
+        stop.addEventListener("click", async () => {
+          if (!window.confirm("Stop " + (proc.name || proc.bot) + " for " + proc.phone + "? Saved session files will not be deleted.")) return;
+          stop.disabled = true;
+          try {
+            const result = await request("/api/multibot/stop", {
+              method: "POST",
+              body: JSON.stringify({ bot: proc.bot, phone: proc.phone })
+            });
+            processesStatus.textContent = result.message || "Stop requested.";
+            await loadProcesses();
+          } catch (error) {
+            processesStatus.textContent = error.message;
+            stop.disabled = false;
+          }
+        });
+
+        card.append(title, details, stop);
+        processesBox.append(card);
+      }
+    } catch (error) {
+      processesStatus.textContent = error.message;
+    }
+  }
+
+  refreshProcessesButton?.addEventListener("click", loadProcesses);
+
+  const openButton = $("whatsappBtn");
+  openButton?.addEventListener("click", () => {
+    if (!panel.hidden) {
+      loadBots();
+      loadProcesses();
+    }
+  });
+  if (!panel.hidden) {
+    loadBots();
+    loadProcesses();
+  }
+})();
+</script>
+
+<script>
+// ALSON_ACCOUNT_UI_V1
+(() => {
+  const $ = id => document.getElementById(id);
+  const tokenKey = "alson-ai-token";
+  const userKey = "alson-ai-user";
+  let mode = "login";
+  let currentUser = null;
+
+  const token = () => sessionStorage.getItem(tokenKey) || "";
+  const say = message => { $("accountMessage").textContent = message; };
+
+  function setUser(user) {
+    currentUser = user || null;
+    if (user) sessionStorage.setItem(userKey, JSON.stringify(user));
+    else sessionStorage.removeItem(userKey);
+
+    $("signedInPanel").hidden = !user;
+    $("accountForm").hidden = Boolean(user);
+    const nameEl = $("signedInName");
+    nameEl.textContent = user?.username || "";
+    const showOwnerBadge = user?.role === "owner" && user?.badge === true;
+    $("signedInBadgeLabel").hidden = !showOwnerBadge;
+
+    const ownerBadge = $("ownerBadge");
+    ownerBadge.hidden = true;
+    ownerBadge.setAttribute("aria-hidden", "true");
+
+    if (showOwnerBadge) {
+      const badge = ownerBadge.cloneNode(true);
+      badge.removeAttribute("id");
+      badge.removeAttribute("hidden");
+      badge.setAttribute("aria-hidden", "false");
+      badge.setAttribute("aria-label", "ALSON AI owner verification badge");
+      badge.setAttribute("title", "ALSON AI owner verification badge");
+      nameEl.appendChild(document.createTextNode(" "));
+      nameEl.appendChild(badge);
+    }
+    $("chat").hidden = !user;
+    const sing = $("singPanel");
+    if (sing && !user) sing.hidden = true;
+    if (user) say("You're signed in. Welcome to ALSON AI.");
+  }
+
+  function updateOwnerKey() {
+    const ownerName = $("accountUsername").value.trim().toLowerCase() === "alsonmachingauta";
+    $("ownerKeyWrap").hidden = !(mode === "register" && ownerName);
+  }
+
+  $("accountUsername").addEventListener("input", updateOwnerKey);
+  $("accountMode").addEventListener("click", () => {
+    mode = mode === "login" ? "register" : "login";
+    $("accountSubmit").textContent = mode === "login" ? "Log in" : "Create account";
+    $("accountMode").textContent = mode === "login" ? "Create account" : "I have an account";
+    $("accountPassword").autocomplete = mode === "login" ? "current-password" : "new-password";
+    updateOwnerKey();
+    say(mode === "login" ? "Log in to your account." : "Create your account.");
+  });
+
+  $("accountForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const username = $("accountUsername").value.trim();
+    const password = $("accountPassword").value;
+    const payload = { username, password };
+    if (mode === "register" && username.toLowerCase() === "alsonmachingauta") {
+      payload.ownerSetupKey = $("ownerSetupKey").value;
+    }
+    say(mode === "login" ? "Logging in…" : "Creating account…");
+    $("accountSubmit").disabled = true;
+    try {
+      const response = await fetch("/api/auth/" + (mode === "login" ? "login" : "register"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || "Account request failed.");
+      sessionStorage.setItem(tokenKey, data.token);
+      setUser(data.user);
+      $("accountPassword").value = "";
+      $("ownerSetupKey").value = "";
+      say("Signed in successfully.");
+    } catch (error) {
+      say(error.message || "Could not sign in.");
+    } finally {
+      $("accountSubmit").disabled = false;
+    }
+  });
+
+  $("logoutBtn").addEventListener("click", async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token() }
+      });
+    } catch {}
+    sessionStorage.removeItem(tokenKey);
+    setUser(null);
+    say("You are logged out. Log in to continue.");
+  });
+
+  $("profileForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const username = $("profileUsername").value.trim();
+    const result = $("profileResult");
+    result.textContent = "Loading profile…";
+    try {
+      const response = await fetch("/api/users/" + encodeURIComponent(username), {
+        headers: token() ? { "Authorization": "Bearer " + token() } : {}
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || "Profile not found.");
+      const p = data.profile;
+      result.replaceChildren();
+      const title = document.createElement("p");
+      title.textContent = p.username;
+      if (p.role === "owner" && p.badge === true) {
+        const badge = $("ownerBadge").cloneNode(true);
+        badge.removeAttribute("id");
+        badge.removeAttribute("hidden");
+        badge.setAttribute("aria-hidden", "false");
+        badge.setAttribute("aria-label", "ALSON AI owner verification badge");
+        badge.setAttribute("title", "ALSON AI owner verification badge");
+        title.appendChild(document.createTextNode(" "));
+        title.appendChild(badge);
+        title.appendChild(document.createTextNode(" ALSON AI owner"));
+      }
+      const counts = document.createElement("p");
+      counts.textContent = "Followers: " + (p.followerCount ?? 0) +
+        " · Following: " + (p.followingCount ?? 0);
+      result.append(title, counts);
+
+      if (currentUser && p.id !== currentUser.id) {
+        const followButton = document.createElement("button");
+        followButton.textContent = p.isFollowing ? "Unfollow" : "Follow";
+        followButton.addEventListener("click", async () => {
+          followButton.disabled = true;
+          try {
+            const r = await fetch("/api/users/" + encodeURIComponent(p.username) + "/follow", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token() },
+              body: JSON.stringify({ follow: !p.isFollowing })
+            });
+            const d = await r.json();
+            if (!r.ok || !d.ok) throw new Error(d.error || "Follow request failed.");
+            $("profileForm").requestSubmit();
+          } catch (error) {
+            result.append(document.createTextNode(error.message || "Follow request failed."));
+            followButton.disabled = false;
+          }
+        });
+        result.append(followButton);
+      }
+    } catch (error) {
+      result.textContent = error.message || "Could not load profile.";
+    }
+  });
+
+  async function restoreSession() {
+    if (!token()) {
+      setUser(null);
+      say("Log in or create an account to use ALSON AI.");
+      return;
+    }
+    try {
+      const response = await fetch("/api/auth/me", {
+        headers: { "Authorization": "Bearer " + token() }
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error("Session expired.");
+      setUser(data.user);
+    } catch {
+      sessionStorage.removeItem(tokenKey);
+      setUser(null);
+      say("Your session expired. Please log in again.");
+    }
+  }
+
+  setUser(null);
+  restoreSession();
+})();
+</script>
+
+<script id="alsonCharactersApp">
+(() => {
+  const $ = id => document.getElementById(id);
+  const view = $("alsonCharactersView");
+  const mainChat = $("chat");
+  const composer = document.querySelector(".composerWrap");
+  const modeButton = $("charactersBtn");
+  const whatsappButton = $("whatsappBtn");
+  if (!view || !mainChat || !composer || !modeButton) return;
+
+  const discover = $("acDiscover");
+  const conversation = $("acConversation");
+  const grid = $("acGrid");
+  const filters = $("acFilters");
+  const listStatus = $("acListStatus");
+  const createForm = $("acCreateForm");
+  const createStatus = $("acCreateStatus");
+  const chatLog = $("acChatLog");
+  const chatInput = $("acChatInput");
+  const chatForm = $("acChatForm");
+  const chatStatus = $("acChatStatus");
+  let characters = [];
+  let activeCategory = "All";
+  let activeCharacter = null;
+  let busy = false;
+  const PAGE_SIZE = 24;
+  let currentPage = 1;
+  let totalCharacters = 0;
+  let availableCategories = ["All"];
+  let searchQuery = "";
+
+  function token() {
+    return sessionStorage.getItem("alson-ai-token") || "";
+  }
+  async function api(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token(),
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Request failed (" + response.status + ").");
+    return data;
+  }
+  function status(el, text, bad = false) {
+    el.textContent = text;
+    el.style.color = bad ? "#fda4af" : "";
+  }
+  function showCharactersMode(enabled) {
+    view.hidden = !enabled;
+    mainChat.hidden = enabled;
+    composer.hidden = enabled;
+    modeButton.classList.toggle("active", enabled);
+    if (enabled) loadCharacters();
+  }
+  function make(tag, cls, text) {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (text !== undefined) el.textContent = text;
+    return el;
+  }
+
+  let searchInput, searchForm, pageInfo, previousButton, nextButton;
+
+  function setupDiscoveryControls() {
+    if (searchForm) return;
+
+    searchForm = document.createElement("form");
+    searchForm.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;";
+    searchInput = document.createElement("input");
+    searchInput.type = "search";
+    searchInput.placeholder = "Search names, aliases, gender, personality…";
+    searchInput.setAttribute("aria-label", "Search characters");
+    searchInput.value = searchQuery;
+    searchInput.style.cssText = "flex:1;min-width:180px;padding:12px;border-radius:12px;border:1px solid var(--border,#444);background:var(--panel,#171923);color:inherit;";
+    const searchButton = make("button", "ac-btn primary", "Search");
+    searchButton.type = "submit";
+    searchForm.append(searchInput, searchButton);
+    filters.before(searchForm);
+
+    const pager = document.createElement("div");
+    pager.style.cssText = "display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:16px 0;";
+    previousButton = make("button", "ac-btn", "← Previous");
+    previousButton.type = "button";
+    pageInfo = make("span", "", "Page 1");
+    pageInfo.setAttribute("aria-live", "polite");
+    nextButton = make("button", "ac-btn", "Next →");
+    nextButton.type = "button";
+    previousButton.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadCharacters();
+      }
+    });
+    nextButton.addEventListener("click", () => {
+      if (currentPage < Math.ceil(totalCharacters / PAGE_SIZE)) {
+        currentPage++;
+        loadCharacters();
+      }
+    });
+    pager.append(previousButton, pageInfo, nextButton);
+    grid.after(pager);
+
+    searchForm.addEventListener("submit", event => {
+      event.preventDefault();
+      searchQuery = searchInput.value.trim();
+      currentPage = 1;
+      loadCharacters();
+    });
+  }
+
+  function drawFilters() {
+    filters.replaceChildren();
+    for (const category of availableCategories) {
+      const button = make("button", "ac-filter" + (category === activeCategory ? " active" : ""), category);
+      button.type = "button";
+      button.addEventListener("click", () => {
+        activeCategory = category;
+        currentPage = 1;
+        drawFilters();
+        loadCharacters();
+      });
+      filters.append(button);
+    }
+  }
+
+  function characterImageUrl(character) {
+    if (character.portraitUrl) return character.portraitUrl;
+
+    // Temporary free-to-view stock-photo fallbacks, not AI-generated portraits.
+    const female = [
+      "photo-1534528741775-53994a69daeb",
+      "photo-1531123897727-8f129e1688ce",
+      "photo-1524504388940-b1c1722653e1"
+    ];
+    const male = [
+      "photo-1500648767791-00dcc994a43e",
+      "photo-1506794778202-cad84cf45f1d",
+      "photo-1507003211169-0a1dd7228f2d"
+    ];
+    const other = [
+      "photo-1534528741775-53994a69daeb",
+      "photo-1500648767791-00dcc994a43e"
+    ];
+
+    const gender = String(character.gender || "").toLowerCase();
+    const pool = gender.includes("woman") || gender === "female"
+      ? female
+      : gender.includes("man") || gender === "male"
+        ? male
+        : other;
+
+    const key = String(character.id || character.name || "character");
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+    }
+
+    return "https://images.unsplash.com/" + pool[hash % pool.length] +
+      "?auto=format&fit=crop&w=700&h=900&q=80";
+  }
+
+  function setCharacterAvatar(character) {
+    const avatar = $("acChatAvatar");
+    avatar.replaceChildren();
+
+    const fallback = make("span", "", character.emoji || "💜");
+    const img = document.createElement("img");
+    img.alt = character.name + " portrait";
+    img.loading = "lazy";
+    img.src = characterImageUrl(character);
+    img.onerror = () => img.remove();
+
+    avatar.append(img, fallback);
+  }
+
+  function drawCards() {
+    grid.replaceChildren();
+    if (!characters.length) {
+      grid.append(make("div", "ac-empty", "No matching characters found. Try another search."));
+      return;
+    }
+    for (const character of characters) {
+      const card = make("button", "ac-card");
+      card.type = "button";
+      const art = make("div", "ac-art");
+      const fallback = make("span", "ac-art-fallback", character.emoji || "💜");
+      const portrait = document.createElement("img");
+      portrait.alt = character.name + " portrait";
+      portrait.loading = "lazy";
+      portrait.decoding = "async";
+      portrait.src = characterImageUrl(character);
+      portrait.onerror = () => portrait.remove();
+      art.append(portrait, fallback);
+      const body = make("div", "ac-card-body");
+      body.append(
+        make("div", "ac-name", character.name),
+        make("div", "ac-category", [character.category, character.gender].filter(Boolean).join(" · ")),
+        make("div", "ac-desc", character.description)
+      );
+      card.append(art, body);
+      card.addEventListener("click", () => openConversation(character));
+      grid.append(card);
+    }
+  }
+
+  async function loadCharacters() {
+    setupDiscoveryControls();
+
+    if (!token()) {
+      status(listStatus, "Please sign in first to browse and chat with characters.", true);
+      grid.replaceChildren();
+      if (pageInfo) pageInfo.textContent = "Sign in required";
+      return;
+    }
+
+    status(listStatus, "Loading characters…");
+    previousButton.disabled = true;
+    nextButton.disabled = true;
+
+    try {
+      const params = new URLSearchParams({
+        q: searchQuery,
+        category: activeCategory,
+        page: String(currentPage),
+        limit: String(PAGE_SIZE)
+      });
+      const data = await api("/api/characters?" + params.toString());
+      characters = data.characters || [];
+      totalCharacters = Number(data.total) || 0;
+      currentPage = Number(data.page) || 1;
+      availableCategories = Array.isArray(data.categories) ? data.categories : ["All"];
+
+      if (!availableCategories.includes(activeCategory)) activeCategory = "All";
+      drawFilters();
+      drawCards();
+
+      const pages = Math.max(1, Number(data.pages) || 1);
+      pageInfo.textContent = "Page " + currentPage + " of " + pages;
+      previousButton.disabled = currentPage <= 1;
+      nextButton.disabled = currentPage >= pages;
+      status(listStatus, totalCharacters.toLocaleString() + " matching characters · showing " +
+        characters.length + " on this page.");
+    } catch (error) {
+      status(listStatus, error.message, true);
+      grid.replaceChildren();
+    }
+  }
+
+  function renderModelReply(bubble, text) {
+    bubble.replaceChildren();
+    bubble.style.background = "transparent";
+    bubble.style.boxShadow = "none";
+    bubble.style.padding = "0";
+    bubble.style.maxWidth = "100%";
+
+    const lines = String(text || "").split(/\\n+/).map(x => x.trim()).filter(Boolean);
+    for (const line of lines) {
+      const action = line.match(/^\\*([\\s\\S]+)\\*$/);
+      const speech = line.match(/^[“"]([\\s\\S]+)[”"]$/);
+      const part = document.createElement("div");
+      part.textContent = action ? action[1] : speech ? speech[1] : line;
+      if (action || (!speech && !/^[“"].*[”"]$/.test(line))) {
+        part.style.cssText = "background:#252a33;color:#c6ceda;font-style:italic;padding:10px 12px;border-radius:12px;margin:0 0 7px;white-space:pre-wrap;overflow-wrap:anywhere;";
+      } else {
+        part.style.cssText = "background:#183d67;color:#eef6ff;padding:10px 12px;border-radius:12px;margin:0 0 7px;white-space:pre-wrap;overflow-wrap:anywhere;";
+      }
+      bubble.append(part);
+    }
+  }
+
+  function drawMessage(message) {
+    const bubble = make("div", "ac-bubble " + (message.role === "user" ? "user" : "model"));
+    if (message.role === "user") bubble.textContent = message.text || "";
+    else renderModelReply(bubble, message.text || "");
+    chatLog.append(bubble);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+  async function openConversation(character) {
+    activeCharacter = character;
+    discover.classList.add("ac-hide");
+    conversation.classList.remove("ac-hide");
+    setCharacterAvatar(character);
+    $("acChatName").textContent = character.name;
+    $("acChatDescription").textContent = character.description;
+    const chatBackground = character.backgroundUrl || characterImageUrl(character);
+    chatLog.style.backgroundImage =
+      "linear-gradient(rgba(8,10,20,.70), rgba(8,10,20,.82)), url(" +
+      JSON.stringify(chatBackground) + ")";
+    chatLog.style.backgroundSize = "cover";
+    chatLog.style.backgroundPosition = "center";
+    chatLog.replaceChildren();
+    status(chatStatus, "Loading conversation…");
+    try {
+      const data = await api("/api/characters/" + encodeURIComponent(character.id) + "/conversation");
+      for (const message of data.messages || []) drawMessage(message);
+      if (!data.messages?.length) {
+        drawMessage({
+          role: "model",
+          text: "Hi! I'm " + character.name + ". 💜 " + character.description + " What would you like to talk about?"
+        });
+      }
+      status(chatStatus, "Your conversation is saved to your account.");
+      chatInput.focus();
+    } catch (error) {
+      status(chatStatus, error.message, true);
+    }
+  }
+  $("acBack").addEventListener("click", () => {
+    activeCharacter = null;
+    conversation.classList.add("ac-hide");
+    discover.classList.remove("ac-hide");
+    loadCharacters();
+  });
+  $("acCreateToggle").addEventListener("click", () => {
+    createForm.classList.toggle("ac-hide");
+    if (!createForm.classList.contains("ac-hide")) createForm.elements.name.focus();
+  });
+  $("acCreateCancel").addEventListener("click", () => {
+    createForm.reset();
+    createForm.classList.add("ac-hide");
+    status(createStatus, "");
+  });
+  createForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (busy) return;
+    busy = true;
+    const submit = $("acCreateSubmit");
+    submit.disabled = true;
+    status(createStatus, "Creating character…");
+    const form = new FormData(createForm);
+    const payload = Object.fromEntries(form.entries());
+    try {
+      const data = await api("/api/characters", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      createForm.reset();
+      createForm.classList.add("ac-hide");
+      status(createStatus, "Character created.");
+      activeCategory = "All";
+      await loadCharacters();
+      status(listStatus, "Created " + data.character.name + ". Select it to start chatting.");
+    } catch (error) {
+      status(createStatus, error.message, true);
+    } finally {
+      busy = false;
+      submit.disabled = false;
+    }
+  });
+  chatForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message || !activeCharacter || busy) return;
+    if (!token()) {
+      status(chatStatus, "Your session has expired. Please sign in again.", true);
+      return;
+    }
+    busy = true;
+    $("acChatSend").disabled = true;
+    chatInput.value = "";
+    drawMessage({ role: "user", text: message });
+    const pending = make("div", "ac-bubble model", (activeCharacter.emoji || "💜") + " Thinking…");
+    chatLog.append(pending);
+    chatLog.scrollTop = chatLog.scrollHeight;
+    status(chatStatus, "");
+    try {
+      const data = await api("/api/characters/" + encodeURIComponent(activeCharacter.id) + "/chat", {
+        method: "POST",
+        body: JSON.stringify({ message })
+      });
+      renderModelReply(pending, data.reply);
+      chatLog.scrollTop = chatLog.scrollHeight;
+      status(chatStatus, "Saved");
+    } catch (error) {
+      pending.textContent = "⚠️ " + error.message;
+      status(chatStatus, error.message, true);
+    } finally {
+      busy = false;
+      $("acChatSend").disabled = false;
+      chatInput.focus();
+    }
+  });
+  chatInput.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      chatForm.requestSubmit();
+    }
+  });
+  modeButton.addEventListener("click", () => {
+    showCharactersMode(view.hidden);
+  });
+  whatsappButton?.addEventListener("click", () => {
+    if (!view.hidden) showCharactersMode(false);
+  });
+  document.querySelectorAll(".tools .mode").forEach(button => {
+    if (button !== modeButton && button !== whatsappButton) {
+      button.addEventListener("click", () => {
+        if (!view.hidden) showCharactersMode(false);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

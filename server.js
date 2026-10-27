@@ -1,3 +1,4 @@
+import { ALSON_IDENTITY } from "./lib/alsonIdentity.js";
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
@@ -175,6 +176,8 @@ app.post("/api/chat", async (req, res) => {
       contents,
       config: {
         systemInstruction:
+          ALSON_IDENTITY +
+          "\n\n" +
           SYSTEM_PROMPT +
           "\n\nCHARACTER MODE:\n" +
           (CHARACTERS[character] || CHARACTERS.assistant),
